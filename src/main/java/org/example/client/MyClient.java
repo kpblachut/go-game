@@ -20,6 +20,8 @@ public class MyClient extends StackPane {
     private static final String SERVER_IP = "localhost";
     private static final int SERVER_PORT = 12345;
 
+    String lobby, code;
+
     BufferedReader inputReader;
     PrintWriter outputWriter;
 
@@ -37,15 +39,16 @@ public class MyClient extends StackPane {
     public void myRun() {
         try{
             Socket socket = new Socket(SERVER_IP, SERVER_PORT);
-            System.out.println("1");
             inputReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            System.out.println("2");
             outputWriter = new PrintWriter(socket.getOutputStream(), true);
-            System.out.println("3");
-            outputWriter.println(nickname);
+            outputWriter.println(nickname); // Podanie serwerowi nicku
 
             // Testowanie
-            outputWriter.println("CREATE_LOBBY");
+            if(lobby == null || code == null)
+                outputWriter.println("CREATE_LOBBY");
+            else
+                outputWriter.println("JOIN_LOBBY " + lobby + " " + code);
+
         } catch (IOException e){
             System.out.println("nie udalo sie");
         }
@@ -73,6 +76,11 @@ public class MyClient extends StackPane {
                 e.printStackTrace();
             }
         }
+    }
+
+    public void setLobbyAndCode(String lobby, String code) {
+        this.lobby = lobby;
+        this.code = code;
     }
 
 }

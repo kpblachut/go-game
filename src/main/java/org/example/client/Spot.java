@@ -42,11 +42,11 @@ public class Spot extends StackPane {
         this.getChildren().add(new Rectangle(22,22, Color.valueOf("#ded9b6")));
         this.getChildren().add(new Rectangle(22,22, Color.valueOf("#ded9b6")));
 
-        this.setAlignment(this.getChildren().get(0), javafx.geometry.Pos.CENTER);
-        this.setAlignment(this.getChildren().get(1), Pos.TOP_LEFT);
-        this.setAlignment(this.getChildren().get(2), Pos.TOP_RIGHT);
-        this.setAlignment(this.getChildren().get(3), Pos.BOTTOM_LEFT);
-        this.setAlignment(this.getChildren().get(4), Pos.BOTTOM_RIGHT);
+        setAlignment(this.getChildren().get(0), javafx.geometry.Pos.CENTER);
+        setAlignment(this.getChildren().get(1), Pos.TOP_LEFT);
+        setAlignment(this.getChildren().get(2), Pos.TOP_RIGHT);
+        setAlignment(this.getChildren().get(3), Pos.BOTTOM_LEFT);
+        setAlignment(this.getChildren().get(4), Pos.BOTTOM_RIGHT);
 
         shadow = new Ellipse( 15,10);
         shadow.setFill(Color.valueOf("#000000"));

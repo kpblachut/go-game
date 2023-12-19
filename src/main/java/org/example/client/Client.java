@@ -1,12 +1,15 @@
 package org.example.client;
 
+import javafx.application.Application;
+import javafx.stage.Stage;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
-public class Client {
+public class Client{
     private static final String SERVER_IP = "localhost";
     private static final int SERVER_PORT = 12345;
 

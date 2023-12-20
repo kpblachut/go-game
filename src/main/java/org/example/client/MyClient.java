@@ -27,13 +27,18 @@ public class MyClient extends StackPane {
 
     String nickname;
 
-    public MyClient(String nickname) {
+    SemiLogic game;
+
+    public MyClient(String nickname, int size) {
         this.nickname = nickname;
         StackPane pain = new StackPane();
-        Button dupon = new Button("CHANGE_TURN");
-        dupon.setOnMouseClicked(this::changeTurn);
-        this.getChildren().add(dupon);
-        setAlignment(dupon, Pos.CENTER);
+        //Button dupon = new Button("CHANGE_TURN");
+        //dupon.setOnMouseClicked(this::changeTurn);
+        //this.getChildren().add(dupon);
+        //setAlignment(dupon, Pos.CENTER);
+        game = new SemiLogic(size);
+        this.getChildren().add(game.getGb());
+        setAlignment(this.getChildren().get(0), Pos.CENTER);
     }
 
     public void myRun() {
@@ -81,6 +86,10 @@ public class MyClient extends StackPane {
     public void setLobbyAndCode(String lobby, String code) {
         this.lobby = lobby;
         this.code = code;
+    }
+
+    public void setSize(int size) {
+        game = new SemiLogic(size);
     }
 
 }

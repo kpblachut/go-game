@@ -20,6 +20,8 @@ public class MyClient extends StackPane {
     private static final String SERVER_IP = "localhost";
     private static final int SERVER_PORT = 12345;
 
+    boolean myTurn;
+    StoneType myType;
     String lobby, code;
 
     BufferedReader inputReader;
@@ -91,6 +93,15 @@ public class MyClient extends StackPane {
     public void setSize(int size) {
         game = new SemiLogic(size);
     }
+
+    public void setTurn(boolean turn) {
+        this.myTurn = turn;
+    }
+
+    public void setColor(StoneType st){
+        this.myType = st;
+    }
+
 
 }
 

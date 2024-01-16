@@ -12,12 +12,16 @@ public class Lobby {
 
     private boolean whiteTurn;
 
-    int[][] board;  // Tu może Stone[][]? Wtedy można by dodać pole name do każdego kamienia, i nazywać je
-                    // po kolei nastepnymi liczbami, w ten sposób można by było zrobić sposób zapisywania
-                    // kolejnosci ruchow
+    int[][] board;
+    // W artykule z Byte, Jonathan K. Millen
+    // Zrobił coś takiego, że plansza ma o 2 pola w każdą stronę wiecej
+    // i krawędzie to 7
+    // 1 - czarny kamien, 2 - biały kamien
+    // 4 - zaznaczenie grupy, 8 - zaznaczenie oddechow
+    // w przypadku grupy, po prostu sumowanie 4 z numerem koloru
 
     public Lobby(String name, String code, int size) {
-        this.board = new int[size][size];
+        this.board = new int[size+2][size+2]; // dla krawedzi
         this.lobbyName = name;
         this.lobbyCode = code;
         this.whiteTurn = false;
@@ -43,14 +47,14 @@ public class Lobby {
         whiteTurn = !whiteTurn;
         if(whiteTurn) {
             // wyslanie do bialego ze jego tura
-            whitePlayer.sendMessage("");
+            whitePlayer.sendMessage("Y_TURN");
             // wyslanie do czarnego ze niejego tura
-            blackPlayer.sendMessage("");
+            blackPlayer.sendMessage("NY_TURN");
         } else {
             // wyslanie do czarnego ze jego tura
-            blackPlayer.sendMessage("");
+            blackPlayer.sendMessage("Y_TURN");
             // wyslanie do bialego ze niejego tura
-            whitePlayer.sendMessage("");
+            whitePlayer.sendMessage("NY_TURN");
         }
     }
 
@@ -62,9 +66,9 @@ public class Lobby {
     }
 
     public boolean isMoveLegal(/*tu moze ruch?*/) {
-        boolean move;
+        boolean move = false;
         // Sprawdzanie ruchu
-        return false;   // Do zmiany
+        return move;   // Do zmiany
     }
 
     // Trzeba dodać, jeszcze jakieś rzeczy, ale na razie nie wyobrażam sobie jakie

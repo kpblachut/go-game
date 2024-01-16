@@ -15,6 +15,7 @@ import javafx.scene.shape.Rectangle;
 
 public class Spot extends StackPane {
     private Stone stone;
+    int x, y; // Coordinates
 
     Ellipse shadow;
     ObservableList<Node> nodes;
@@ -63,20 +64,25 @@ public class Spot extends StackPane {
         this.getChildren().add(stone);
         stone.setCenterX(25);
         stone.setCenterY(25);
-        //shadow.setRadiusX(13); // Dla efektu 3D chciałem zmniejszyc cien, ale wygladało kiepsko
         setMargin(shadow, new Insets(4,2,0,0));
+    }
+    public void rmStone() {
+        this.stone = null;
+    }
+
+    public void setCoords(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
+
+    public String getCoords(){
+        return String.valueOf(x)+" "+String.valueOf(y);
     }
 
     EventHandler<MouseEvent> eventHandler = new EventHandler<MouseEvent>() {
         @Override
         public void handle(MouseEvent e) {
             if(stone == null) {
-                /*
-                Ellipse shadow = new Ellipse( 15,10);
-                shadow.setFill(Color.valueOf("#000000"));
-                nodes.add(shadow);
-                setMargin(shadow, new Insets(4,2,0,0));
-                 */
                 shadow.setVisible(true);
             }
         }

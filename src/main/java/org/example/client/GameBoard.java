@@ -21,6 +21,7 @@ public class GameBoard extends GridPane {
                 // Wciskamy na chama do tabeli podwójnej wszystkie przecięcia
                 crossings[i][j] = new Spot();
                 this.add(crossings[i][j], i, j);
+                crossings[i][j].setCoords(i,j); // Aby Spot wiedział którym jest
             }
         }
     }

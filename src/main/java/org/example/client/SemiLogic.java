@@ -12,7 +12,8 @@ public class SemiLogic {
     public SemiLogic(int size){
         gb = new GameBoard(size);
         gb.initialise();
-        AddEventHandlers(gb.getChildren());
+
+         // To trzeba bedzie przeniesc do MyClienta, aby moc dodawać kamyki
 
         whiteTurn = false; // Zaczyna czarny
     }

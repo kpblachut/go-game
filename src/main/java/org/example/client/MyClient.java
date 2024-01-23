@@ -1,6 +1,7 @@
 package org.example.client;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -37,22 +38,47 @@ public class MyClient extends StackPane {
 
     GameBoard gb;
 
+    int size;
     public MyClient(String nickname, int size) {
         instance = this; // To sie wydaje mega niestosowne
         this.nickname = nickname;
         StackPane pain = new StackPane();
+        this.size = size;
         //Button dupon = new Button("CHANGE_TURN");
         //dupon.setOnMouseClicked(this::changeTurn);
         //this.getChildren().add(dupon);
         //setAlignment(dupon, Pos.CENTER);
-        game = new SemiLogic(size); // Do usuniecia
+        //game = new SemiLogic(size); // Do usuniecia
+        /* TESTOWANIE
         gb = new GameBoard(size);
         gb.initialise();
         AddEventHandlers(gb.getChildren());
         //this.getChildren().add(game.getGb()); // Do usuniecia
         this.getChildren().add(gb);
         setAlignment(this.getChildren().get(0), Pos.CENTER);
+         */
     }
+    public MyClient(String nickname, String lobby, String code) {
+        instance = this; // To sie wydaje mega niestosowne
+        this.nickname = nickname;
+        this.lobby = lobby;
+        this.code = code;
+        StackPane pain = new StackPane();
+        //Button dupon = new Button("CHANGE_TURN");
+        //dupon.setOnMouseClicked(this::changeTurn);
+        //this.getChildren().add(dupon);
+        //setAlignment(dupon, Pos.CENTER);
+        //game = new SemiLogic(size); // Do usuniecia
+        /* TESTOWANIE
+        gb = new GameBoard(size);
+        gb.initialise();
+        AddEventHandlers(gb.getChildren());
+        //this.getChildren().add(game.getGb()); // Do usuniecia
+        this.getChildren().add(gb);
+        setAlignment(this.getChildren().get(0), Pos.CENTER);
+         */
+    }
+
 
     public void myRun() {
         try{
@@ -63,7 +89,7 @@ public class MyClient extends StackPane {
 
             // Testowanie
             if(lobby == null || code == null) {
-                outputWriter.println("CREATE_LOBBY");
+                outputWriter.println("CREATE_LOBBY " + size);
             } else if(lobby != null && code != null) {
                 outputWriter.println("JOIN_LOBBY " + lobby + " " + code);
             } else {
@@ -113,9 +139,11 @@ public class MyClient extends StackPane {
         this.code = code;
     }
 
+    /*
     public void setSize(int size) {
         game = new SemiLogic(size);
     }
+    */
 
     public void setTurn(boolean turn) {
         this.myTurn = turn;
@@ -143,18 +171,29 @@ public class MyClient extends StackPane {
             myTurn = true;
         } else if(serverMessage.equals("NY_TURN")){ // Not Your Turn
             myTurn = false;
-        } else if(serverMessage.split(" ")[0].equals("w")){ // Place white
+        } else if(serverMessage.split(" ")[0].equals("W")){ // Place white
             putStone(StoneType.WHITE, Integer.parseInt(serverMessage.split(" ")[1]),Integer.parseInt(serverMessage.split(" ")[2]));
-        } else if(serverMessage.split(" ")[0].equals("b")){ // Place black
+        } else if(serverMessage.split(" ")[0].equals("B")){ // Place black
             putStone(StoneType.BLACK, Integer.parseInt(serverMessage.split(" ")[1]),Integer.parseInt(serverMessage.split(" ")[2]));
         } else if(serverMessage.split(" ")[0].equals("RM")){
             removeStone(Integer.parseInt(serverMessage.split(" ")[1]), Integer.parseInt(serverMessage.split(" ")[2]));
-        } else if(serverMessage.split(" ")[0].equals("COLOR")){
-            if(serverMessage.split(" ")[1].equals("B")){
-                setColor(StoneType.BLACK);
-            } else {
-                setColor(StoneType.WHITE);
-            }
+        } else if(serverMessage.split(" ")[0].equals("INIT")){ //Zmiana Do inicjalizacji z serwera
+            int size = Integer.parseInt(serverMessage.split(" ")[2]);
+            myTurn = false;
+            setColor((serverMessage.split(" ")[1].equals("B")) ? StoneType.BLACK : StoneType.WHITE);
+
+            gb = new GameBoard(size);
+            gb.initialise();
+            System.out.println("gb initialised");
+            AddEventHandlers(gb.getChildren());
+            System.out.println("Added EventHandlers to children");
+
+            Platform.runLater(() -> {
+                this.getChildren().add(gb);
+
+                setAlignment(this.getChildren().get(0), Pos.CENTER);
+            });
+            System.out.println("board placed");
         }
     }
 
@@ -171,11 +210,14 @@ public class MyClient extends StackPane {
     private void handleSpotMouseClick(MouseEvent event) {
         if (event.getSource() instanceof Spot clickedSpot && myTurn) { //tutaj nie jestem dumny z tego instanceof, mozna go podmienic na try catcha
             if(!clickedSpot.hasStone()){
+                System.out.println("Nacisnieto" + clickedSpot.getCoords());
                 outputWriter.println(myType.toString()+" "+clickedSpot.getCoords());
                 changeMyTurn();
             } else {
                 System.out.println("zajete pole");
             }
+        } else {
+            System.out.println("Czekaj na swoja kolej");
         }
     }
 

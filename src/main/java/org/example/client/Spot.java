@@ -1,5 +1,6 @@
 package org.example.client;
 
+import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -61,7 +62,12 @@ public class Spot extends StackPane {
 
     public void PlaceStone(Stone stone){
         this.stone = stone;
-        this.getChildren().add(stone);
+
+        //??
+        Platform.runLater(() -> {
+            this.getChildren().add(stone);
+        });
+
         stone.setCenterX(25);
         stone.setCenterY(25);
         setMargin(shadow, new Insets(4,2,0,0));

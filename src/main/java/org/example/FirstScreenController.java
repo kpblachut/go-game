@@ -14,7 +14,7 @@ import javafx.stage.Stage;
 import org.example.client.MyClient;
 
 public class FirstScreenController {
-    ObservableList<Integer> choices = FXCollections.observableArrayList(9,15,19);
+    ObservableList<Integer> choices = FXCollections.observableArrayList(9,13,19);
 
     @FXML
     private Button JoinButton;
@@ -37,7 +37,7 @@ public class FirstScreenController {
 
     //Metoda po przycisnieciu przycisku
     @FXML
-    void StartNewLobby(ActionEvent event) throws Exception{
+    void StartNewLobby(ActionEvent event) throws Exception {
         String nick = nicknameField.getText();
         MyClient newClient = new MyClient(nick, SizeCheckBox.getValue().intValue());
         Parent root = newClient;
@@ -54,6 +54,15 @@ public class FirstScreenController {
         String nick = nicknameField.getText();
         String Lobby = LobbyIDField.getText();
         String LobbyCode = LobbyCodeField.getText();
+
+        MyClient newClient = new MyClient(nick, Lobby, LobbyCode);
+        Parent root = newClient;
+
+        Stage newStage = new Stage();
+        newStage.setTitle(nick);
+        newStage.setScene(new Scene(root));
+        newStage.show();
+        newClient.myRun();
 
         //MyClient newClient = new MyClient(nick, SizeCheckBox.getValue());
         //Parent root = newClient;

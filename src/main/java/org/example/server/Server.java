@@ -11,7 +11,9 @@ import java.util.Map;
 public class Server {
     private static final int PORT = 12345;
     private List<ClientHandler> clients = new ArrayList<>();
-    private Map<String, List<ClientHandler>> lobbies = new HashMap<>();
+    //private Map<String, List<ClientHandler>> lobbies = new HashMap<>();
+    private Map<String, Lobby> lobbies = new HashMap<>();
+
 
     public static void main(String[] args) {
         new Server().startServer();
@@ -43,7 +45,19 @@ public class Server {
         }
     }
 
+    public String generateLobbyCode() {
+        // Generate a simple lobby code for demonstration purposes
+        return String.valueOf((int)(Math.random() * 10000));
+    }
+
+    public void createLobby(String name, String code, int size) {
+        Lobby newLobby = new Lobby(name, code, size);
+        lobbies.put(name, newLobby);
+    }
+
+    //Funkcje których narazie nie potrzebujemy
     public void broadcastMessageInLobby(String message, String lobbyName, ClientHandler sender) {
+        /*
         if (lobbies.containsKey(lobbyName)) {
             List<ClientHandler> lobbyClients = lobbies.get(lobbyName);
             for (ClientHandler client : lobbyClients) {
@@ -52,6 +66,7 @@ public class Server {
                 }
             }
         }
+        */
     }
 
     public void removeClient(ClientHandler clientHandler) {
@@ -60,6 +75,7 @@ public class Server {
     }
 
     public void removeClientFromLobby(ClientHandler clientHandler, String lobbyName) {
+        /*
         if (lobbies.containsKey(lobbyName)) {
             List<ClientHandler> lobbyClients = lobbies.get(lobbyName);
             lobbyClients.remove(clientHandler);
@@ -68,10 +84,6 @@ public class Server {
                 lobbies.remove(lobbyName);
             }
         }
-    }
-
-    public String generateLobbyCode() {
-        // Generate a simple lobby code for demonstration purposes
-        return String.valueOf((Math.random() * 10000));
+        */
     }
 }

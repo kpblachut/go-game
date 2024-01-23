@@ -16,9 +16,10 @@ public class ClientHandler implements Runnable {
     private String clientName;
     private String currentLobby;
     private String lobbyCode;
-    private Map<String, List<ClientHandler>> lobbies;
+    private Map<String, Lobby> lobbies;
+    Lobby MyLobby;
 
-    public ClientHandler(Socket clientSocket, Server server, Map<String, List<ClientHandler>> lobbies) {
+    public ClientHandler(Socket clientSocket, Server server, Map<String, Lobby> lobbies) {
         this.clientSocket = clientSocket;
         this.server = server;
         this.lobbies = lobbies;
@@ -47,17 +48,23 @@ public class ClientHandler implements Runnable {
 
     public void joinLobby(String lobbyName, String lobbyCode) {
         if (!lobbies.containsKey(lobbyName)) {
-            sendMessage("Invalid lobby name.");
+            sendMessage("Invalid lobby name: " + lobbyName);
             return;
         }
 
-        List<ClientHandler> lobbyClients = lobbies.get(lobbyName);
+        //List<ClientHandler> lobbyClients = lobbies.get(lobbyName);
+        Lobby lobby = lobbies.get(lobbyName);
 
-        if (lobbyCode.equals(lobbyName)) {
+        if (lobbyCode.equals(lobbyCode) && !lobby.isFull()) {
             sendMessage("Successfully joined lobby: " + lobbyName);
             // Notify others about the new member
             server.broadcastMessageInLobby(clientName + " has joined the lobby.", lobbyName, this);
-            lobbyClients.add(this);
+
+            lobby.add(this);
+            setLobby(lobby);
+
+        } else if(lobby.isFull()) {
+            sendMessage("Lobby Full!");
         } else {
             sendMessage("Invalid lobby code for lobby: " + lobbyName);
         }
@@ -68,25 +75,34 @@ public class ClientHandler implements Runnable {
         try {
             String clientMessage;
             while ((clientMessage = inputReader.readLine()) != null) {
-                if (clientMessage.equalsIgnoreCase("CREATE_LOBBY")) {
-                    // Handle lobby creation logic here
-                    String lobbyCode = server.generateLobbyCode();
-                    sendMessage("Your lobby code is: " + lobbyCode);
-                    server.broadcastMessage(clientName + " has created a lobby. Lobby code: " + lobbyCode, this);
-                    joinLobby(clientName, lobbyCode); // The lobby name is the same as the client's name for simplicity
-                } else if (clientMessage.startsWith("JOIN_LOBBY ")) {
-                    // Handle joining a lobby
-                    String[] parts = clientMessage.split(" ");
-                    if (parts.length == 3) {
-                        String lobbyToJoin = parts[1];
-                        String lobbyCode = parts[2];
-                        joinLobby(lobbyToJoin, lobbyCode);
+                if(MyLobby == null) {
+                    if (clientMessage.split(" ")[0].equalsIgnoreCase("CREATE_LOBBY")) { //Sprawdzanie
+                        // Lobby Creation
+                        String lobbyCode = server.generateLobbyCode();
+                        sendMessage("Your lobby code is: " + lobbyCode);
+
+                        server.createLobby(clientName, lobbyCode, Integer.parseInt(clientMessage.split(" ")[1]));
+
+                        server.broadcastMessage(clientName + " has created a lobby. Lobby code: " + lobbyCode, this);
+
+                        joinLobby(clientName, lobbyCode);
+
+                    } else if (clientMessage.startsWith("JOIN_LOBBY ")) {
+                        // Handle joining a lobby
+                        String[] parts = clientMessage.split(" ");
+                        if (parts.length == 3) {
+                            String lobbyToJoin = parts[1];
+                            String lobbyCode = parts[2];
+                            joinLobby(lobbyToJoin, lobbyCode);
+                        } else {
+                            sendMessage("Invalid command format. Use JOIN_LOBBY lobbyName lobbyCode");
+                        }
                     } else {
-                        sendMessage("Invalid command format. Use JOIN_LOBBY lobbyName lobbyCode");
+                        // Broadcast the message to all clients in the same lobby
+                        server.broadcastMessageInLobby(clientName + ": " + clientMessage, currentLobby, this);
                     }
                 } else {
-                    // Broadcast the message to all clients in the same lobby
-                    server.broadcastMessageInLobby(clientName + ": " + clientMessage, currentLobby, this);
+                    MyLobby.handleMessage(clientMessage);
                 }
             }
         } catch (IOException e) {
@@ -100,5 +116,9 @@ public class ClientHandler implements Runnable {
             server.removeClient(this);
             server.broadcastMessage(clientName + " has left the chat.", this);
         }
+    }
+
+    public void setLobby(Lobby lobby){
+        MyLobby = lobby;
     }
 }

@@ -138,9 +138,9 @@ public class Lobby {
             if(isMoveLegal(/*Tutaj ruch, pewnie SplitCommand mozna wcisnac*/)){
                 int x = Integer.parseInt(SplitCommand[1]);
                 int y = Integer.parseInt(SplitCommand[2]);
-                int color = (SplitCommand[0] == "BLACK") ? 1 : 2;
+                int color = (SplitCommand[0].equals("BLACK")) ? 1 : 2;
                 board[x+1][y+1] = color;
-                sendUpdates(SplitCommand[0].charAt(0) + " " +x+" "+y);
+                sendUpdates("PUT " + SplitCommand[0] + " " +x+" "+y);
                 changeTurn();
             } else {
                 if(SplitCommand[0].equals("BLACK")){
@@ -151,6 +151,11 @@ public class Lobby {
                     setPlayerTurn(whitePlayer, true);
                 }
             }
+        } else if (SplitCommand[0].equals("CHANGE_TURN") && whiteTurn == SplitCommand[1].equals("WHITE")){
+            changeTurn();
+            sendUpdates(SplitCommand[1] + " Has passed his turn");
+        } else {
+            sendUpdates(message);
         }
     }
 

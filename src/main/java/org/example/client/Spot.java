@@ -28,8 +28,8 @@ public class Spot extends StackPane {
     public Spot(){
         super();
         // rozmiar pola dla kamyczka
-        this.setWidth(50);
-        this.setHeight(50);
+        this.setWidth(30);
+        this.setHeight(30);
 
 
         // Jak na razie debilny sposób ustawiania tła dla pola
@@ -37,12 +37,12 @@ public class Spot extends StackPane {
         // i przemnożenie tego przez odpowiedni procent
         // ale aktualnie jak to startuje to gridpane(GameBoard) ucina całą pustą część
         // i lepi przez to przeciecia
-        this.getChildren().add(new Rectangle(50,50, Color.valueOf("#524631"))); // #524631
+        this.getChildren().add(new Rectangle(30,30, Color.valueOf("#524631"))); // #524631
 
-        this.getChildren().add(new Rectangle(22,22, Color.valueOf("#ded9b6"))); // #ded9b6
-        this.getChildren().add(new Rectangle(22,22, Color.valueOf("#ded9b6")));
-        this.getChildren().add(new Rectangle(22,22, Color.valueOf("#ded9b6")));
-        this.getChildren().add(new Rectangle(22,22, Color.valueOf("#ded9b6")));
+        this.getChildren().add(new Rectangle(14.5,14.5, Color.valueOf("#ded9b6"))); // #ded9b6
+        this.getChildren().add(new Rectangle(14.5,14.5, Color.valueOf("#ded9b6")));
+        this.getChildren().add(new Rectangle(14.5,14.5, Color.valueOf("#ded9b6")));
+        this.getChildren().add(new Rectangle(14.5,14.5, Color.valueOf("#ded9b6")));
 
         setAlignment(this.getChildren().get(0), javafx.geometry.Pos.CENTER);
         setAlignment(this.getChildren().get(1), Pos.TOP_LEFT);
@@ -50,7 +50,7 @@ public class Spot extends StackPane {
         setAlignment(this.getChildren().get(3), Pos.BOTTOM_LEFT);
         setAlignment(this.getChildren().get(4), Pos.BOTTOM_RIGHT);
 
-        shadow = new Ellipse( 15,10);
+        shadow = new Ellipse( 12,7);
         shadow.setFill(Color.valueOf("#000000"));
         shadow.setVisible(false);
         this.getChildren().add(shadow);
@@ -68,8 +68,8 @@ public class Spot extends StackPane {
             shadow.setVisible(true);
         });
 
-        stone.setCenterX(25);
-        stone.setCenterY(25);
+        stone.setCenterX(15);
+        stone.setCenterY(15);
         setMargin(shadow, new Insets(4,2,0,0));
     }
     public void rmStone() {
@@ -102,4 +102,12 @@ public class Spot extends StackPane {
             }
         }
     };
+
+    public double getSzer(){
+     return 30.0;
+    }
+
+    public double getWys(){
+        return 30.0;
+    }
 }

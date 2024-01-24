@@ -7,6 +7,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
@@ -207,6 +208,10 @@ public class MyClient /*extends StackPane*/ {   //Zmiana StackPane na Scene
                 setAlignment(GP.getChildren().get(0), Pos.CENTER);
             });
             //System.out.println("board placed");
+        } else {
+            Platform.runLater(() -> {
+                chatMessages.getChildren().add(new Label(serverMessage));
+            });
         }
     }
 

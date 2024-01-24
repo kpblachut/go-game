@@ -63,9 +63,9 @@ public class Spot extends StackPane {
     public void PlaceStone(Stone stone){
         this.stone = stone;
 
-        //??
         Platform.runLater(() -> {
             this.getChildren().add(stone);
+            shadow.setVisible(true);
         });
 
         stone.setCenterX(25);

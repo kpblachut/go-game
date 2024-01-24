@@ -7,9 +7,11 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -19,7 +21,7 @@ import java.net.Socket;
 
 import static javafx.scene.layout.StackPane.setAlignment;
 
-public class MyClient extends StackPane {
+public class MyClient /*extends StackPane*/ {   //Zmiana StackPane na Scene
     private static final String SERVER_IP = "localhost";
     private static final int SERVER_PORT = 12345;
 
@@ -39,10 +41,20 @@ public class MyClient extends StackPane {
     GameBoard gb;
 
     int size;
+
+    //NOWE RZECZY
+    Scene scene;
+    LayOutController MyController;
+    AnchorPane GP;
+    Button SB;
+    Button CTB;
+    TextField Chat;
+    VBox chatMessages;
+
     public MyClient(String nickname, int size) {
         instance = this; // To sie wydaje mega niestosowne
         this.nickname = nickname;
-        StackPane pain = new StackPane();
+        //StackPane pain = new StackPane();
         this.size = size;
         //Button dupon = new Button("CHANGE_TURN");
         //dupon.setOnMouseClicked(this::changeTurn);
@@ -63,7 +75,7 @@ public class MyClient extends StackPane {
         this.nickname = nickname;
         this.lobby = lobby;
         this.code = code;
-        StackPane pain = new StackPane();
+        //StackPane pain = new StackPane();
         //Button dupon = new Button("CHANGE_TURN");
         //dupon.setOnMouseClicked(this::changeTurn);
         //this.getChildren().add(dupon);
@@ -165,8 +177,8 @@ public class MyClient extends StackPane {
     }
 
     public void handleCommand(String serverMessage){
-        if(serverMessage.equals("CH_TURN")){
-            myTurn = !myTurn;
+        if(serverMessage.equals("CH_TURN")){    // Niepotrzebne raczej, bo tutaj odrazu po kliknieciu zmieniamy lokalnie runde
+            myTurn = !myTurn;                   // tak aby zabezpieczyc się przed ewentualnym lagiem ze strony serwera
         } else if(serverMessage.equals("Y_TURN")){ // Your Turn
             myTurn = true;
         } else if(serverMessage.equals("NY_TURN")){ // Not Your Turn
@@ -184,16 +196,17 @@ public class MyClient extends StackPane {
 
             gb = new GameBoard(size);
             gb.initialise();
-            System.out.println("gb initialised");
+            //System.out.println("gb initialised");
             AddEventHandlers(gb.getChildren());
-            System.out.println("Added EventHandlers to children");
+            //System.out.println("Added EventHandlers to children");
 
             Platform.runLater(() -> {
-                this.getChildren().add(gb);
+                //this.getChildren().add(gb);
+                GP.getChildren().add(gb);
 
-                setAlignment(this.getChildren().get(0), Pos.CENTER);
+                setAlignment(GP.getChildren().get(0), Pos.CENTER);
             });
-            System.out.println("board placed");
+            //System.out.println("board placed");
         }
     }
 
@@ -210,7 +223,6 @@ public class MyClient extends StackPane {
     private void handleSpotMouseClick(MouseEvent event) {
         if (event.getSource() instanceof Spot clickedSpot && myTurn) { //tutaj nie jestem dumny z tego instanceof, mozna go podmienic na try catcha
             if(!clickedSpot.hasStone()){
-                System.out.println("Nacisnieto" + clickedSpot.getCoords());
                 outputWriter.println(myType.toString()+" "+clickedSpot.getCoords());
                 changeMyTurn();
             } else {
@@ -221,6 +233,18 @@ public class MyClient extends StackPane {
         }
     }
 
-
+    public void setScene(Scene scene){
+        this.scene = scene;
+    }
+    public Scene getScene(){return scene;}
+    public void setController(LayOutController controller){
+        MyController = controller;
+        CTB = controller.getChangeTurnButton();
+        CTB.setOnMouseClicked(this::changeTurn);
+        SB = controller.getSendTextButton();
+        GP = controller.getGamePlace();
+        Chat = controller.getChatTextField();
+        chatMessages = controller.getChatMessages();
+    }
 }
 

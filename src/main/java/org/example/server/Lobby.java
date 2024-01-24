@@ -133,9 +133,6 @@ public class Lobby {
 
     public void handleMessage(String message){
 
-        //Test czy wiadomosci w ogole dochodza
-        System.out.println(message);
-
         String[] SplitCommand = message.split(" ");
         if(SplitCommand[0].equals("BLACK") || SplitCommand[0].equals("WHITE")){
             if(isMoveLegal(/*Tutaj ruch, pewnie SplitCommand mozna wcisnac*/)){

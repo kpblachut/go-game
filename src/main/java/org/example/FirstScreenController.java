@@ -1,10 +1,12 @@
 package org.example;
 
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
@@ -45,33 +47,30 @@ public class FirstScreenController {
 
             //Nowe
             FXMLLoader fxmlLoader = new FXMLLoader(FirstScreenController.class.getResource("/LayOut.fxml"));
-            //newClient.getScene() = new Scene(fxmlLoader.load(),500,500);
-            Stage newStage = new Stage();
-            newStage.setTitle(nick);
-            newClient.setScene(new Scene(fxmlLoader.load(), 500, 500));
+            newClient.setScene(new Scene(fxmlLoader.load()));
 
             LayOutController controller = fxmlLoader.getController();
             newClient.setController(controller);
 
-            newStage.setScene(newClient.getScene());
-            newStage.show();
+            //Zamykanie
+            Stage biezaceOkno = (Stage) ((Node) JoinButton).getScene().getWindow();
+
+            newClient.setStage(biezaceOkno);
             newClient.myRun();
+            biezaceOkno.setScene(newClient.getScene());
+
+            //biezaceOkno.sizeToScene();
+
+            biezaceOkno.setOnCloseRequest(e ->{
+                newClient.getThread().interrupt();
+                Platform.exit();
+                System.exit(0);
+            });
 
         } catch (Exception e) {
             System.out.println("hihi blad");
             e.printStackTrace();
         }
-        //MyClient newClient = new MyClient(nick, SizeCheckBox.getValue().intValue());
-
-        /*
-        Parent root = newClient;
-
-        Stage newStage = new Stage();
-        newStage.setTitle(nick);
-        newStage.setScene(new Scene(root));
-        newStage.show();
-        newClient.myRun();
-        */
     }
 
     @FXML
@@ -85,32 +84,31 @@ public class FirstScreenController {
 
             //Nowe
             FXMLLoader fxmlLoader = new FXMLLoader(FirstScreenController.class.getResource("/LayOut.fxml"));
-            //newClient.getScene() = new Scene(fxmlLoader.load(),500,500);
-            Stage newStage = new Stage();
-            newStage.setTitle(nick);
-            Scene scene = newClient.getScene();
-            scene = new Scene(fxmlLoader.load(), 500, 500);
+            newClient.setScene(new Scene(fxmlLoader.load(), 500, 500));
 
             LayOutController controller = fxmlLoader.getController();
             newClient.setController(controller);
 
-            newStage.setScene(scene);
-            newStage.show();
+            //Zamykanie
+            Stage biezaceOkno = (Stage) ((Node) JoinButton).getScene().getWindow();
+
+            newClient.setStage(biezaceOkno);
             newClient.myRun();
+            biezaceOkno.setScene(newClient.getScene());
+
+            biezaceOkno.sizeToScene();
+
+            biezaceOkno.setOnCloseRequest(e ->{
+                newClient.getThread().interrupt();
+                System.out.println("Watek interrupt");
+                Platform.exit();
+                System.exit(0);
+            });
 
         } catch (Exception e) {
             System.out.println("hihi blad");
             e.printStackTrace();
         }
-        /* Zmienione na to u góry
-        Parent root = newClient;
-
-        Stage newStage = new Stage();
-        newStage.setTitle(nick);
-        newStage.setScene(new Scene(root));
-        newStage.show();
-        newClient.myRun();
-        */
     }
 
     @FXML

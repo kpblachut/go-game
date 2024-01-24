@@ -13,7 +13,7 @@ public class Stone extends Ellipse {
     }
 
     public Stone(StoneType type) {
-        super(15,10);
+        super(12,7);
         this.type = type;
         this.setFill(type == StoneType.BLACK ? Color.valueOf("#1f1d1d") : Color.valueOf("#d4cfcf"));
         this.setStroke(Color.BLACK);

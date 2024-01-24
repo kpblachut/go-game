@@ -26,6 +26,8 @@ public class MyClient /*extends StackPane*/ {   //Zmiana StackPane na Scene
     private static final String SERVER_IP = "localhost";
     private static final int SERVER_PORT = 12345;
 
+    Thread thread;
+
     boolean myTurn;
     StoneType myType;
     String lobby, code;
@@ -37,13 +39,12 @@ public class MyClient /*extends StackPane*/ {   //Zmiana StackPane na Scene
 
     String nickname;
 
-    SemiLogic game; // Do usuniecia
-
     GameBoard gb;
 
     int size;
 
     //NOWE RZECZY
+    Stage stage;
     Scene scene;
     LayOutController MyController;
     AnchorPane GP;
@@ -57,44 +58,17 @@ public class MyClient /*extends StackPane*/ {   //Zmiana StackPane na Scene
         this.nickname = nickname;
         //StackPane pain = new StackPane();
         this.size = size;
-        //Button dupon = new Button("CHANGE_TURN");
-        //dupon.setOnMouseClicked(this::changeTurn);
-        //this.getChildren().add(dupon);
-        //setAlignment(dupon, Pos.CENTER);
-        //game = new SemiLogic(size); // Do usuniecia
-        /* TESTOWANIE
-        gb = new GameBoard(size);
-        gb.initialise();
-        AddEventHandlers(gb.getChildren());
-        //this.getChildren().add(game.getGb()); // Do usuniecia
-        this.getChildren().add(gb);
-        setAlignment(this.getChildren().get(0), Pos.CENTER);
-         */
     }
     public MyClient(String nickname, String lobby, String code) {
         instance = this; // To sie wydaje mega niestosowne
         this.nickname = nickname;
         this.lobby = lobby;
         this.code = code;
-        //StackPane pain = new StackPane();
-        //Button dupon = new Button("CHANGE_TURN");
-        //dupon.setOnMouseClicked(this::changeTurn);
-        //this.getChildren().add(dupon);
-        //setAlignment(dupon, Pos.CENTER);
-        //game = new SemiLogic(size); // Do usuniecia
-        /* TESTOWANIE
-        gb = new GameBoard(size);
-        gb.initialise();
-        AddEventHandlers(gb.getChildren());
-        //this.getChildren().add(game.getGb()); // Do usuniecia
-        this.getChildren().add(gb);
-        setAlignment(this.getChildren().get(0), Pos.CENTER);
-         */
     }
 
 
     public void myRun() {
-        try{
+        try {
             Socket socket = new Socket(SERVER_IP, SERVER_PORT);
             inputReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             outputWriter = new PrintWriter(socket.getOutputStream(), true);
@@ -111,7 +85,8 @@ public class MyClient /*extends StackPane*/ {   //Zmiana StackPane na Scene
                 return;
             }
 
-            new Thread(new ClientListener(inputReader)).start();
+            thread = new Thread(new ClientListener(inputReader));
+            thread.start();
 
         } catch (IOException e){
             System.out.println("nie udalo sie");
@@ -119,7 +94,7 @@ public class MyClient /*extends StackPane*/ {   //Zmiana StackPane na Scene
     }
 
     private void changeTurn(MouseEvent mouseEvent) {
-        outputWriter.println("CHANGE_TURN");
+        outputWriter.println("CHANGE_TURN " + myType.toString());
     }
 
     public static MyClient getInstance() {
@@ -184,10 +159,14 @@ public class MyClient /*extends StackPane*/ {   //Zmiana StackPane na Scene
             myTurn = true;
         } else if(serverMessage.equals("NY_TURN")){ // Not Your Turn
             myTurn = false;
-        } else if(serverMessage.split(" ")[0].equals("W")){ // Place white
-            putStone(StoneType.WHITE, Integer.parseInt(serverMessage.split(" ")[1]),Integer.parseInt(serverMessage.split(" ")[2]));
-        } else if(serverMessage.split(" ")[0].equals("B")){ // Place black
-            putStone(StoneType.BLACK, Integer.parseInt(serverMessage.split(" ")[1]),Integer.parseInt(serverMessage.split(" ")[2]));
+        } else if(serverMessage.split(" ")[0].equals("PUT")){ // Place
+            StoneType st;
+            if(serverMessage.split(" ")[1].equals("WHITE")){
+                st = StoneType.WHITE;
+            } else {
+                st = StoneType.BLACK;
+            }
+            putStone(st , Integer.parseInt(serverMessage.split(" ")[2]),Integer.parseInt(serverMessage.split(" ")[3]));
         } else if(serverMessage.split(" ")[0].equals("RM")){
             removeStone(Integer.parseInt(serverMessage.split(" ")[1]), Integer.parseInt(serverMessage.split(" ")[2]));
         } else if(serverMessage.split(" ")[0].equals("INIT")){ //Zmiana Do inicjalizacji z serwera
@@ -206,6 +185,9 @@ public class MyClient /*extends StackPane*/ {   //Zmiana StackPane na Scene
                 GP.getChildren().add(gb);
 
                 setAlignment(GP.getChildren().get(0), Pos.CENTER);
+
+                stage.setWidth(gb.getWys() + Chat.getWidth() + 75.0);
+                stage.setHeight(gb.getWys());
             });
             //System.out.println("board placed");
         } else {
@@ -242,14 +224,32 @@ public class MyClient /*extends StackPane*/ {   //Zmiana StackPane na Scene
         this.scene = scene;
     }
     public Scene getScene(){return scene;}
+
+    public void setStage(Stage stage){
+        this.stage = stage;
+    }
+
+    private void sendText(MouseEvent mouseEvent) {
+        String message = nickname + ": ";
+        message = message + Chat.getText();
+        Chat.clear();
+        outputWriter.println(message);
+    }
+
     public void setController(LayOutController controller){
         MyController = controller;
         CTB = controller.getChangeTurnButton();
         CTB.setOnMouseClicked(this::changeTurn);
         SB = controller.getSendTextButton();
+        SB.setOnMouseClicked(this::sendText);
         GP = controller.getGamePlace();
         Chat = controller.getChatTextField();
         chatMessages = controller.getChatMessages();
     }
+
+    public Thread getThread(){
+        return thread;
+    }
+
 }
 

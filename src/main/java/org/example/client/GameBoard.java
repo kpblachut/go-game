@@ -33,4 +33,11 @@ public class GameBoard extends GridPane {
     public void setCrossings(Spot[][] crossings) {
         this.crossings = crossings;
     }
+
+    public double getSzer(){
+        return size * 30.0;
+    }
+    public double getWys(){
+        return size * 30.0;
+    }
 }

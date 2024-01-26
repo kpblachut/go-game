@@ -2,18 +2,24 @@ package org.example.client;
 
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.example.NewController;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.zip.GZIPOutputStream;
 
 public class Client {
     private static final String SERVER_IP = "localhost";
     private static final int SERVER_PORT = 12345;
 
     NewController controller;
-    GameBoard goban;
+    private GameBoard goban;
+    private Scene scene;
+    static Client instance;
+
+    CurrentGame cg;
 
     /*
     public static void main(String[] args) {
@@ -22,12 +28,15 @@ public class Client {
      */
 
     public Client(NewController controller) {
+        this.instance = this;
         this.controller = controller;
         goban = new GameBoard(19);
 
         Platform.runLater(()->{
             controller.getGamePlace().getChildren().add(goban);
         });
+
+        cg = new CurrentGame(this, controller);
     }
 
     public void startClient() {
@@ -68,7 +77,7 @@ public class Client {
             }
 
             // Start a thread to listen for server messages
-            new Thread(new ClientListener(inputReader)).start();
+            new Thread(new ClientListener(ois, instance)).start();
 
             // Send messages to the server
             while (true) {
@@ -88,22 +97,44 @@ public class Client {
     }
 
     static class ClientListener implements Runnable {
-        private BufferedReader reader;
 
-        public ClientListener(BufferedReader reader) {
-            this.reader = reader;
+        Client instance;
+        private BufferedReader reader;
+        private ObjectInputStream ois;
+
+        public ClientListener(/*BufferedReader reader*/ ObjectInputStream ois, Client instance) {
+            //this.reader = reader;
+            this.ois = ois;
+            this.instance = instance;
         }
 
         @Override
         public void run() {
             try {
-                String serverMessage;
-                while ((serverMessage = reader.readLine()) != null) {
-                    System.out.println(serverMessage);
+                //String serverMessage;
+                Object serverObject;
+                while ((serverObject = ois.readObject()) != null) {
+                    instance.handle(serverObject);
                 }
-            } catch (IOException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
+    }
+
+    public GameBoard getGoban() {
+        return goban;
+    }
+
+    public void handle(Object serverObject) {
+
+    }
+
+    public void setScene(Scene scene) {
+        this.scene = scene;
+    }
+
+    public Scene getScene(){
+        return scene;
     }
 }

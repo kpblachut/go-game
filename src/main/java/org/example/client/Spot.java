@@ -14,7 +14,7 @@ import javafx.scene.shape.Ellipse;
 import javafx.scene.shape.ObservableFaceArray;
 import javafx.scene.shape.Rectangle;
 
-public class Spot extends StackPane {
+public class Spot extends StackPane { // Older version, now using Intersection
     private Stone stone;
 
     double size;

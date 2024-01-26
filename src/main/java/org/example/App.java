@@ -26,13 +26,14 @@ public class App extends Application
         NewController controller = fxmlLoader.getController();
 
         Client BAlice = new Client(controller);
+        BAlice.setScene(scene);
 
         stage.setTitle("Go Game");
-        stage.sizeToScene();
         stage.setScene(scene);
         stage.setOnCloseRequest(e -> {
             Platform.exit();
         });
         stage.show();
+        stage.setResizable(false);
     }
 }

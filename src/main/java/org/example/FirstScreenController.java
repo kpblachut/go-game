@@ -56,7 +56,7 @@ public class FirstScreenController {
             Stage biezaceOkno = (Stage) ((Node) JoinButton).getScene().getWindow();
 
             newClient.setStage(biezaceOkno);
-            newClient.myRun();
+
             biezaceOkno.setScene(newClient.getScene());
 
             //biezaceOkno.sizeToScene();
@@ -66,6 +66,8 @@ public class FirstScreenController {
                 Platform.exit();
                 System.exit(0);
             });
+            newClient.myRun();
+            biezaceOkno.sizeToScene();
 
         } catch (Exception e) {
             System.out.println("hihi blad");
@@ -93,7 +95,7 @@ public class FirstScreenController {
             Stage biezaceOkno = (Stage) ((Node) JoinButton).getScene().getWindow();
 
             newClient.setStage(biezaceOkno);
-            newClient.myRun();
+
             biezaceOkno.setScene(newClient.getScene());
 
             biezaceOkno.sizeToScene();
@@ -104,6 +106,8 @@ public class FirstScreenController {
                 Platform.exit();
                 System.exit(0);
             });
+            newClient.myRun();
+            biezaceOkno.sizeToScene();
 
         } catch (Exception e) {
             System.out.println("hihi blad");

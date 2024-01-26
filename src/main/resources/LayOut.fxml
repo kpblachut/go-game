@@ -5,42 +5,26 @@
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<GridPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.client.LayOutController">
-  <columnConstraints>
-    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-  </columnConstraints>
-  <rowConstraints>
-    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-  </rowConstraints>
+
+<HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.client.LayOutController">
    <children>
-      <VBox prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1">
+      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
          <children>
-            <ScrollPane fx:id="ChatArea" prefHeight="200.0" prefWidth="200.0">
+            <ScrollPane fx:id="ChatArea" layoutX="-25.0" prefHeight="200.0" prefWidth="200.0">
                <content>
-                  <VBox fx:id="ChatMessages" minHeight="-Infinity" minWidth="-Infinity" prefHeight="200.0" prefWidth="282.0" />
+                  <VBox fx:id="ChatMessages" prefHeight="200.0" prefWidth="183.0" />
                </content>
             </ScrollPane>
-            <HBox prefHeight="28.0" prefWidth="300.0">
-               <children>
-                  <Label text="Chat" />
-                  <TextField fx:id="ChatTextField" prefHeight="25.0" prefWidth="231.0" promptText="Your Message..." />
-                  <Button fx:id="SendTextButton" mnemonicParsing="false" text="Send" />
-               </children>
-            </HBox>
-            <AnchorPane prefHeight="200.0" prefWidth="200.0">
-               <children>
-                  <Button fx:id="ChangeTurnButton" layoutX="102.0" layoutY="82.0" mnemonicParsing="false" text="CHANGE TURN" />
-               </children>
-            </AnchorPane>
+            <Button fx:id="ChangeTurnButton" layoutX="40.0" layoutY="293.0" mnemonicParsing="false" text="CHANGE TURN" />
+            <Label layoutX="54.0" layoutY="265.0" text="TURN:" />
+            <Label fx:id="TurnLabel" layoutX="88.0" layoutY="265.0" text="NO ONE" />
+            <TextField fx:id="ChatTextField" layoutX="13.0" layoutY="200.0" promptText="Your message..." />
+            <Button fx:id="SendTextButton" layoutX="65.0" layoutY="225.0" mnemonicParsing="false" text="SEND" />
          </children>
-      </VBox>
-      <AnchorPane fx:id="GamePlace" prefHeight="200.0" prefWidth="200.0" />
+      </AnchorPane>
+      <AnchorPane fx:id="GamePlace" minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0" />
    </children>
-</GridPane>
+</HBox>

@@ -8,6 +8,7 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
@@ -51,7 +52,10 @@ public class MyClient /*extends StackPane*/ {   //Zmiana StackPane na Scene
     Button SB;
     Button CTB;
     TextField Chat;
+    ScrollPane ChatArea;
     VBox chatMessages;
+
+    Label turn;
 
     public MyClient(String nickname, int size) {
         instance = this; // To sie wydaje mega niestosowne
@@ -84,6 +88,8 @@ public class MyClient /*extends StackPane*/ {   //Zmiana StackPane na Scene
                 socket.close();
                 return;
             }
+
+            turn.setText("NOT SET");
 
             thread = new Thread(new ClientListener(inputReader));
             thread.start();
@@ -157,8 +163,14 @@ public class MyClient /*extends StackPane*/ {   //Zmiana StackPane na Scene
             myTurn = !myTurn;                   // tak aby zabezpieczyc się przed ewentualnym lagiem ze strony serwera
         } else if(serverMessage.equals("Y_TURN")){ // Your Turn
             myTurn = true;
+            Platform.runLater(() -> {
+                turn.setText("YOURS");
+            });
         } else if(serverMessage.equals("NY_TURN")){ // Not Your Turn
             myTurn = false;
+            Platform.runLater(() -> {
+                turn.setText("THEIRS");
+            });
         } else if(serverMessage.split(" ")[0].equals("PUT")){ // Place
             StoneType st;
             if(serverMessage.split(" ")[1].equals("WHITE")){
@@ -175,19 +187,16 @@ public class MyClient /*extends StackPane*/ {   //Zmiana StackPane na Scene
             setColor((serverMessage.split(" ")[1].equals("B")) ? StoneType.BLACK : StoneType.WHITE);
 
             gb = new GameBoard(size);
-            gb.initialise();
+            //gb.initialise();
             //System.out.println("gb initialised");
             AddEventHandlers(gb.getChildren());
             //System.out.println("Added EventHandlers to children");
-
+            gb.setColor(serverMessage.split(" ")[1]);
             Platform.runLater(() -> {
                 //this.getChildren().add(gb);
                 GP.getChildren().add(gb);
 
                 setAlignment(GP.getChildren().get(0), Pos.CENTER);
-
-                stage.setWidth(gb.getWys() + Chat.getWidth() + 75.0);
-                stage.setHeight(gb.getWys());
             });
             //System.out.println("board placed");
         } else {
@@ -244,7 +253,9 @@ public class MyClient /*extends StackPane*/ {   //Zmiana StackPane na Scene
         SB.setOnMouseClicked(this::sendText);
         GP = controller.getGamePlace();
         Chat = controller.getChatTextField();
+        ChatArea = controller.getChatArea();
         chatMessages = controller.getChatMessages();
+        turn = controller.getTurnLabel();
     }
 
     public Thread getThread(){

@@ -16,33 +16,31 @@ import javafx.scene.shape.Rectangle;
 
 public class Spot extends StackPane {
     private Stone stone;
+
+    double size;
     int x, y; // Coordinates
 
-    Ellipse shadow;
+    Circle shadow;
     ObservableList<Node> nodes;
 
     public boolean hasStone(){
         return stone != null;
     }
 
-    public Spot(){
+    public Spot(double size){
         super();
+        this.size = size;
         // rozmiar pola dla kamyczka
-        this.setWidth(30);
-        this.setHeight(30);
+        this.setWidth(size);
+        this.setHeight(size);
+
+        this.getChildren().add(new Rectangle(size,size, Color.valueOf("#524631"))); // #524631
 
 
-        // Jak na razie debilny sposób ustawiania tła dla pola
-        // do podmianki są te rozmiary, na jakiś getWidth(), getHeight()
-        // i przemnożenie tego przez odpowiedni procent
-        // ale aktualnie jak to startuje to gridpane(GameBoard) ucina całą pustą część
-        // i lepi przez to przeciecia
-        this.getChildren().add(new Rectangle(30,30, Color.valueOf("#524631"))); // #524631
-
-        this.getChildren().add(new Rectangle(14.5,14.5, Color.valueOf("#ded9b6"))); // #ded9b6
-        this.getChildren().add(new Rectangle(14.5,14.5, Color.valueOf("#ded9b6")));
-        this.getChildren().add(new Rectangle(14.5,14.5, Color.valueOf("#ded9b6")));
-        this.getChildren().add(new Rectangle(14.5,14.5, Color.valueOf("#ded9b6")));
+        this.getChildren().add(new Rectangle(0.483*size,0.483*size, Color.valueOf("#ded9b6"))); // #ded9b6
+        this.getChildren().add(new Rectangle(0.483*size,0.483*size, Color.valueOf("#ded9b6")));
+        this.getChildren().add(new Rectangle(0.483*size,0.483*size, Color.valueOf("#ded9b6")));
+        this.getChildren().add(new Rectangle(0.483*size,0.483*size, Color.valueOf("#ded9b6")));
 
         setAlignment(this.getChildren().get(0), javafx.geometry.Pos.CENTER);
         setAlignment(this.getChildren().get(1), Pos.TOP_LEFT);
@@ -50,8 +48,10 @@ public class Spot extends StackPane {
         setAlignment(this.getChildren().get(3), Pos.BOTTOM_LEFT);
         setAlignment(this.getChildren().get(4), Pos.BOTTOM_RIGHT);
 
-        shadow = new Ellipse( 12,7);
+        shadow = new Circle(0.4*size);
+        //shadow = new Ellipse( 0.4*size,0.233*size);
         shadow.setFill(Color.valueOf("#000000"));
+        shadow.setOpacity(0.9);
         shadow.setVisible(false);
         this.getChildren().add(shadow);
         //TEST
@@ -62,15 +62,17 @@ public class Spot extends StackPane {
 
     public void PlaceStone(Stone stone){
         this.stone = stone;
-
+        stone.setScaleX(0.4*size);
+        stone.setScaleY(0.4*size);
+        stone.setStrokeWidth(0.1);
         Platform.runLater(() -> {
             this.getChildren().add(stone);
             shadow.setVisible(true);
         });
 
-        stone.setCenterX(15);
-        stone.setCenterY(15);
-        setMargin(shadow, new Insets(4,2,0,0));
+        stone.setCenterX(size/2);
+        stone.setCenterY(size/2);
+        //setMargin(shadow, new Insets(4,2,0,0));
     }
     public void rmStone() {
         this.stone = null;
@@ -79,6 +81,11 @@ public class Spot extends StackPane {
     public void setCoords(int x, int y) {
         this.x = x;
         this.y = y;
+    }
+
+    public void setShadowColor(String color){
+        String sColor = (color.equals("W")) ? "#d4cfcf" : "#1f1d1d";
+        shadow.setFill(Color.valueOf(sColor));
     }
 
     public String getCoords(){
@@ -103,11 +110,4 @@ public class Spot extends StackPane {
         }
     };
 
-    public double getSzer(){
-     return 30.0;
-    }
-
-    public double getWys(){
-        return 30.0;
-    }
 }

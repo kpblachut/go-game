@@ -1,20 +1,33 @@
 package org.example.client;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.stage.Stage;
+import org.example.NewController;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.Socket;
 
-public class Client{
+public class Client {
     private static final String SERVER_IP = "localhost";
     private static final int SERVER_PORT = 12345;
 
+    NewController controller;
+    GameBoard goban;
+
+    /*
     public static void main(String[] args) {
         new Client().startClient();
+    }
+     */
+
+    public Client(NewController controller) {
+        this.controller = controller;
+        goban = new GameBoard(19);
+
+        Platform.runLater(()->{
+            controller.getGamePlace().getChildren().add(goban);
+        });
     }
 
     public void startClient() {
@@ -23,6 +36,7 @@ public class Client{
 
             BufferedReader inputReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             PrintWriter outputWriter = new PrintWriter(socket.getOutputStream(), true);
+            ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
 
             // Set up client's nickname
             System.out.print("Enter your nickname: ");

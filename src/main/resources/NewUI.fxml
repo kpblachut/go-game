@@ -47,6 +47,7 @@
           <items>
             <MenuItem fx:id="NewGameItem" mnemonicParsing="false" text="New" />
                   <MenuItem fx:id="JoinGameItem" mnemonicParsing="false" text="Join" />
+                  <MenuItem fx:id="PlayWBItem" mnemonicParsing="false" text="Play with bot" />
             <MenuItem fx:id="LoadGameItem" mnemonicParsing="false" text="Load" />
             <SeparatorMenuItem mnemonicParsing="false" />
             <MenuItem fx:id="PassTurnItem" mnemonicParsing="false" text="Pass Turn" />

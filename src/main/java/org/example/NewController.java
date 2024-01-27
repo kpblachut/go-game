@@ -33,6 +33,9 @@ public class NewController {
     @FXML
     private MenuItem SaveGameItem;
 
+    @FXML
+    private MenuItem PlayWBItem;
+
     public AnchorPane getGamePlace() {
         return GamePlace;
     }
@@ -67,5 +70,9 @@ public class NewController {
 
     public MenuItem getJoinGameItem() {
         return JoinGameItem;
+    }
+
+    public MenuItem getPlayWBItem() {
+        return PlayWBItem;
     }
 }

@@ -14,6 +14,8 @@ public class Client {
     private static final String SERVER_IP = "localhost";
     private static final int SERVER_PORT = 12345;
 
+    PrintWriter outputWriter;
+
     NewController controller;
     private GameBoard goban;
     private Scene scene;
@@ -33,7 +35,7 @@ public class Client {
         goban = new GameBoard(19);
 
         Platform.runLater(()->{
-            controller.getGamePlace().getChildren().add(goban);
+            controller.getGamePlace().getChildren().add(goban); //Fake board, without listeners to place stones
         });
 
         cg = new CurrentGame(this, controller);
@@ -44,7 +46,7 @@ public class Client {
             Socket socket = new Socket(SERVER_IP, SERVER_PORT);
 
             BufferedReader inputReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            PrintWriter outputWriter = new PrintWriter(socket.getOutputStream(), true);
+            outputWriter = new PrintWriter(socket.getOutputStream(), true);
             ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
 
             // Set up client's nickname
@@ -127,7 +129,7 @@ public class Client {
     }
 
     public void handle(Object serverObject) {
-
+        cg.handleInput(serverObject);
     }
 
     public void setScene(Scene scene) {
@@ -136,5 +138,11 @@ public class Client {
 
     public Scene getScene(){
         return scene;
+    }
+
+    public void send(String s) {
+        if(outputWriter != null) {
+            outputWriter.println(s);
+        }
     }
 }

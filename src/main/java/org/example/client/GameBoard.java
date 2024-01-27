@@ -2,31 +2,35 @@ package org.example.client;
 
 
 import javafx.scene.layout.GridPane;
+import org.example.client.exceptions.WrongSizeOfBoardException;
 
 public class GameBoard extends GridPane {
 
-    //przeciecia
     private Intersection[][] intersections;
     int size;
 
-    GameBoard(int size) { //cala ma byc 741x741
+    GameBoard(int size) { //cala ma byc 741x741 pikseli
         super();
         this.size = size;
         intersections = new Intersection[size][size];
         for(int i = 0; i < size; i++) {
             for(int j = 0; j < size; j++) {
-                // Wciskamy na chama do tabeli podwójnej wszystkie przecięcia
                 intersections[i][j] = new Intersection(this, i, j);
                 this.add(intersections[i][j].getField(), i, size-j); //W GridPane na odwrót są współrzędne wysokości
             }
         }
     }
 
-    public Intersection[][] getCrossings() {
+    public Intersection[][] getIsecs() {
         return intersections;
     }
 
-    public void updateBoard(char board[][]){
+    public void updateBoard(char board[][]) throws WrongSizeOfBoardException {
+
+        if(size != board.length){
+            throw new WrongSizeOfBoardException();
+        }
+
         for(int i = 0; i < size; i++) {
             for(int j = 0; j < size; j++) {
                 intersections[i][j].rmStone();

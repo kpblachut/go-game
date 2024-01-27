@@ -1,3 +1,4 @@
+/*
 package org.example.client;
 
 import javafx.application.Application;
@@ -22,8 +23,9 @@ import java.io.PrintWriter;
 import java.net.Socket;
 
 import static javafx.scene.layout.StackPane.setAlignment;
-
-public class MyClient /*extends StackPane*/ {   //Zmiana StackPane na Scene
+*/
+/*
+public class MyClient {   //Zmiana StackPane na Scene
     private static final String SERVER_IP = "localhost";
     private static final int SERVER_PORT = 12345;
 
@@ -132,12 +134,6 @@ public class MyClient /*extends StackPane*/ {   //Zmiana StackPane na Scene
         this.lobby = lobby;
         this.code = code;
     }
-
-    /*
-    public void setSize(int size) {
-        game = new SemiLogic(size);
-    }
-    */
 
     public void setTurn(boolean turn) {
         this.myTurn = turn;
@@ -263,4 +259,4 @@ public class MyClient /*extends StackPane*/ {   //Zmiana StackPane na Scene
     }
 
 }
-
+*/

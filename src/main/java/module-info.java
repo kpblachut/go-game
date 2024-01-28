@@ -8,6 +8,4 @@ module org.example {
 
     exports org.example.client;
     opens org.example.client to javafx.fxml;
-    exports org.example.client.exceptions;
-    opens org.example.client.exceptions to javafx.fxml;
 }

@@ -12,7 +12,7 @@ import javafx.geometry.Pos;
 
 import static javafx.scene.layout.StackPane.setAlignment;
 
-public class Intersection {
+public class Intersection extends StackPane {
 
     private static final int BW = 741; // BOARD WIDTH
     final GameBoard gb;
@@ -21,42 +21,46 @@ public class Intersection {
 
     Stone stone;
 
-    StackPane field;
+    //StackPane field;
     Circle shadow;
 
     public Intersection(GameBoard gb, int x, int y) {
+        super();
         this.gb = gb;
         this.x = x;
         this.y = y;
 
-        field = new StackPane();
-        BuildField(field, gb.getSize());
+        BuildField(this, gb.getSize());
     }
 
+    /*
     public StackPane getField(){
         return field;
     }
+    */
 
-    public void PlaceStone(Stone stone){
-        double size = 0.4* ((double) BW /gb.getSize());
-        this.stone = stone;
+    public void placeStone(Stone stone){
+        if(stone == null) {
+            double size = 0.4 * ((double) BW / gb.getSize());
+            this.stone = stone;
 
-        stone.setScaleY(size);
-        stone.setScaleX(size);
-        stone.setStrokeWidth(0.1);
+            stone.setScaleY(size);
+            stone.setScaleX(size);
+            stone.setStrokeWidth(0.1);
 
-        Platform.runLater(() -> {
-            field.getChildren().add(stone);
-            shadow.setVisible(false);
-            stone.setCenterX(size/2);
-            stone.setCenterY(size/2);
-        });
+            Platform.runLater(() -> {
+                this.getChildren().add(stone);
+                shadow.setVisible(false);
+                stone.setCenterX(size / 2);
+                stone.setCenterY(size / 2);
+            });
+        }
     }
 
     public void rmStone(){
         if(stone != null) {
             Platform.runLater(() -> {
-                field.getChildren().remove(stone);
+                this.getChildren().remove(stone);
             });
             this.stone = null;
         }
@@ -68,6 +72,10 @@ public class Intersection {
 
     public int getY(){
         return y;
+    }
+
+    public Stone getStone(){
+        return stone;
     }
 
     // Functions for building appearence only
@@ -88,6 +96,7 @@ public class Intersection {
         shadow = new Circle(0.4*size);
         shadow.setOpacity(0.9);
         shadow.setVisible(false);
+        setShadowColor("#888888"); //Grey
 
         if(x == 0){llc.setHeight(0.517*size);}
         if(x == border - 1){ruc.setHeight(0.517*size);}

@@ -21,6 +21,9 @@ public class Client {
     private Scene scene;
     static Client instance;
 
+    boolean gexit = false;
+    Socket sk;
+
     CurrentGame cg;
 
     /*
@@ -39,12 +42,15 @@ public class Client {
         });
 
         cg = new CurrentGame(this, controller);
+
+        System.out.println("Client initialised");
     }
 
     public void startClient() {
         try {
+            System.out.println("starting client");
             Socket socket = new Socket(SERVER_IP, SERVER_PORT);
-
+            sk = socket;
             //BufferedReader inputReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             //outputWriter = new PrintWriter(socket.getOutputStream(), true);
             outputWriter = new ObjectOutputStream(socket.getOutputStream());
@@ -84,17 +90,17 @@ public class Client {
             new Thread(new ClientListener(ois, instance)).start();
 
             // Send messages to the server
-            while (true) {
-                System.out.print("Enter message (Type 'exit' to close): ");
-                String message = new BufferedReader(new InputStreamReader(System.in)).readLine();
-                //outputWriter.println(message);
-
-                if ("exit".equalsIgnoreCase(message)) {
-                    break;
-                }
-            }
-
-            socket.close();
+//            while (!gexit) {
+////                System.out.print("Enter message (Type 'exit' to close): ");
+////                String message = new BufferedReader(new InputStreamReader(System.in)).readLine();
+////                //outputWriter.println(message);
+////
+////                if ("exit".equalsIgnoreCase(message)) {
+////                    break;
+////                }
+//            }
+//            System.out.println("closing socket");
+//            socket.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -110,15 +116,23 @@ public class Client {
             //this.reader = reader;
             this.ois = ois;
             this.instance = instance;
+            System.out.println("Client listener initialised");
         }
 
         @Override
         public void run() {
             try {
                 //String serverMessage;
+                System.out.println("listening for objects");
                 Object serverObject;
+                System.out.println("sth");
                 while ((serverObject = ois.readObject()) != null) {
-                    instance.handle(serverObject);
+                    if(serverObject instanceof Response){
+                        Response so = (Response) serverObject;
+                        System.out.println(so.getBoard());
+                        System.out.println("getting object from server");
+                        instance.handle(so);
+                    } else {continue;}
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -130,7 +144,8 @@ public class Client {
         return goban;
     }
 
-    public void handle(Object serverObject) {
+    public void handle(Response serverObject) {
+        System.out.println("handling object from server");
         cg.handleInput(serverObject);
     }
 
@@ -145,7 +160,8 @@ public class Client {
     public void send(Object o) {
         if(outputWriter != null) {
             try {
-                outputWriter.writeObject(o);
+                System.out.println("sending object to server");
+                outputWriter.writeObject((Object) o);
             } catch (IOException ioe) {
                 ioe.printStackTrace();
             }
@@ -153,6 +169,13 @@ public class Client {
     }
 
     public void setLobbyId(int lobbyId) {
-        ((Stage) scene.getWindow()).setTitle("Go Game - Lobby: " + lobbyId);
+        System.out.println("Changing name...");
+        Platform.runLater(()->{((Stage) scene.getWindow()).setTitle("Go Game - Lobby: " + lobbyId);});
+    }
+
+    public void quit(){
+        System.out.println("Quitting");
+        gexit = true;
+        try{sk.close();}catch(IOException e){e.printStackTrace();}
     }
 }

@@ -1,18 +1,20 @@
 package org.example.server;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import org.example.client.Response;
+
+import java.io.*;
 import java.net.Socket;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
 public class ClientHandler implements Runnable {
     private Socket clientSocket;
     private Server server;
-    private BufferedReader inputReader;
-    private PrintWriter outputWriter;
+    //private BufferedReader inputReader;
+    private ObjectInputStream inputReader;
+    //private PrintWriter outputWriter;
+    private ObjectOutputStream outputWriter;
     private String clientName;
     private String currentLobby;
     private String lobbyCode;
@@ -24,15 +26,8 @@ public class ClientHandler implements Runnable {
         this.server = server;
         this.lobbies = lobbies;
         try {
-            inputReader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-            outputWriter = new PrintWriter(clientSocket.getOutputStream(), true);
-
-            // Set up client's nickname
-            this.clientName = inputReader.readLine();
-            System.out.println("New client connected: " + clientName);
-
-            // Notify all clients about the new connection
-            server.broadcastMessage(clientName + " has joined the chat.", this);
+            inputReader = new ObjectInputStream(clientSocket.getInputStream());
+            outputWriter = new ObjectOutputStream(clientSocket.getOutputStream());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -42,8 +37,12 @@ public class ClientHandler implements Runnable {
         return clientName;
     }
 
-    public void sendMessage(String message) {
-        outputWriter.println(message);
+    public void sendMessage(Object message) {
+        try {
+            outputWriter.writeObject(message);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void joinLobby(String lobbyName, String lobbyCode) {
@@ -52,7 +51,6 @@ public class ClientHandler implements Runnable {
             return;
         }
 
-        //List<ClientHandler> lobbyClients = lobbies.get(lobbyName);
         Lobby lobby = lobbies.get(lobbyName);
 
         if (lobbyCode.equals(lobbyCode) && !lobby.isFull()) {
@@ -73,38 +71,43 @@ public class ClientHandler implements Runnable {
     @Override
     public void run() {
         try {
-            String clientMessage;
-            while ((clientMessage = inputReader.readLine()) != null) {
-                if(MyLobby == null) {
-                    if (clientMessage.split(" ")[0].equalsIgnoreCase("CREATE_LOBBY")) { //Sprawdzanie
-                        // Lobby Creation
-                        String lobbyCode = server.generateLobbyCode();
-                        sendMessage("Your lobby code is: " + lobbyCode);
+            Object clientMessage;
+            try {
+                while ((clientMessage = inputReader.readObject()) != null) {
+                    //TODO
+                    //OG sending
 
-                        server.createLobby(clientName, lobbyCode, Integer.parseInt(clientMessage.split(" ")[1]));
-
-                        server.broadcastMessage(clientName + " has created a lobby. Lobby code: " + lobbyCode, this);
-
-                        joinLobby(clientName, lobbyCode);
-
-                    } else if (clientMessage.startsWith("JOIN_LOBBY ")) {
-                        // Handle joining a lobby
-                        String[] parts = clientMessage.split(" ");
-                        if (parts.length == 3) {
-                            String lobbyToJoin = parts[1];
-                            String lobbyCode = parts[2];
-                            joinLobby(lobbyToJoin, lobbyCode);
-                        } else {
-                            sendMessage("Invalid command format. Use JOIN_LOBBY lobbyName lobbyCode");
+                    //Testing sending
+                    System.out.println("Recieved packet from client");
+                    System.out.println("Sending trial board");
+                    String[][] board = new String[13][13];
+                    for(int i = 0; i < 13; i++) {
+                        for(int j = 0; j < 13; j++){
+                            board[i][j]="EMPTY";
                         }
-                    } else {
-                        // Broadcast the message to all clients in the same lobby
-                        server.broadcastMessageInLobby(clientName + ": " + clientMessage, currentLobby, this);
                     }
-                } else {
-                    MyLobby.handleMessage(clientMessage);
+                    outputWriter.writeObject(new Response(board, 1111));
+                    outputWriter.flush();
+
+                    String[][] board2 = new String[13][13];
+                    for(int i = 0; i < 13; i++) {
+                        for(int j = 0; j < 13; j++){
+                            board2[i][j]="BLACK";
+                        }
+                    }
+
+                    board2[5][5] = "WHITE";
+                    System.out.println(Arrays.deepToString(board));
+                    Response r = new Response();
+
+                    r.setBoard(board2);
+                    r.setPlayer("TEST");
+                    System.out.println(Arrays.deepToString(r.getBoard()));
+                    outputWriter.writeObject(r);
+                    outputWriter.flush();
+                    System.out.println(Arrays.deepToString(r.getBoard()));
                 }
-            }
+            } catch (ClassNotFoundException e) {}
         } catch (IOException e) {
             e.printStackTrace();
         } finally {

@@ -24,13 +24,14 @@ public class GameBoard extends GridPane {
         return intersections;
     }
 
-    public void updateBoard(int board[][]) {
-
+    public void updateBoard(String[][] board) {
+        System.out.println("Updatuje goban!");
         for(int i = 0; i < size; i++) {
             for(int j = 0; j < size; j++) {
                 intersections[i][j].rmStone();
-                if(board[i][j] == 1 || board[i][j] == 2) {
-                    Stone stone = new Stone((board[i][j]==1) ? StoneType.WHITE : StoneType.BLACK);
+                if(board[i][j].equals("WHITE") || board[i][j].equals("BLACK")) {
+                    Stone stone = new Stone((board[i][j].equals("WHITE")) ? StoneType.WHITE : StoneType.BLACK);
+                    System.out.println("placing stone on: " + i+" "+j);
                     intersections[i][j].placeStone(stone);
                 }
             }

@@ -10,10 +10,11 @@ import javafx.stage.Stage;
 import org.example.NewController;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 public class CurrentGame {
 
-    String myName, opName;
+    String myName = "TEST", opName;
     int lobbyId;
 
     private boolean myTurn;
@@ -38,7 +39,7 @@ public class CurrentGame {
         sng = true;
     }
 
-    public void handleInput(Object input) {
+    public void handleInput(Response input) {
         /*TODO
 
          */
@@ -47,15 +48,21 @@ public class CurrentGame {
             myTurn = false;
             opName = ip.player;
         }
-        if(!sng && ip.board.length == goban.size) {
-            goban.updateBoard(ip.board);
-        } else if (!sng && ip.board.length != goban.size) {
+        System.out.println(ip.player);
+        System.out.println(Arrays.deepToString(ip.getBoard()));
+        if(!sng && ip.getBoard().length == goban.size) {
+            System.out.println("updatuje goban odpowiedniego rozmiaru");
+            System.out.println(Arrays.deepToString(ip.getBoard()));
+            goban.updateBoard(ip.getBoard());
+        } else if (!sng && ip.getBoard().length != goban.size) {
             System.out.println("This shouldn't happen :(");
         } else if (sng) {
-            newBoard(ip.board.length);
-            goban.updateBoard(ip.board);
+            newBoard(ip.getBoard().length);
+            goban.updateBoard(ip.getBoard());
             lobbyId = ip.lobbyId;
             client.setLobbyId(lobbyId);
+        } else {
+            System.out.println("This totally shouldn't happen >:(");
         }
     }
 
@@ -166,6 +173,7 @@ public class CurrentGame {
 
     private void quit(ActionEvent event) {
         System.out.println("Quitting game...");
+        client.quit();
         /*TODO
 
          */
@@ -209,9 +217,12 @@ public class CurrentGame {
     }
 
     private void newBoard(int size){
+        Platform.runLater(()->{
+            controller.getGamePlace().getChildren().remove(goban);});
         goban = null;
         goban = new GameBoard(size);
         AddEventHandlers(goban.getIsecs());
+        Platform.runLater(()->{controller.getGamePlace().getChildren().add(goban);});
         sng = false;
     }
     private void AddEventHandlers(Intersection[][] intersections) { // Tu podmienie potem na gb.getCrossings() powinno dzialac

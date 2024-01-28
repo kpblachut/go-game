@@ -4,6 +4,7 @@ import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Border;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -14,7 +15,7 @@ import static javafx.scene.layout.StackPane.setAlignment;
 
 public class Intersection extends StackPane {
 
-    private static final int BW = 741; // BOARD WIDTH
+    private static final int BW = 600; // BOARD WIDTH
     final GameBoard gb;
     final int x;
     final int y;
@@ -40,7 +41,7 @@ public class Intersection extends StackPane {
     */
 
     public void placeStone(Stone stone){
-        if(stone == null) {
+        if(this.stone == null) {
             double size = 0.4 * ((double) BW / gb.getSize());
             this.stone = stone;
 
@@ -53,6 +54,7 @@ public class Intersection extends StackPane {
                 shadow.setVisible(false);
                 stone.setCenterX(size / 2);
                 stone.setCenterY(size / 2);
+                stone.setVisible(true);
             });
         }
     }
@@ -83,6 +85,7 @@ public class Intersection extends StackPane {
         double size = (double) BW /border;
         f.setPrefSize(size, size);
 
+        f.setBorder(Border.EMPTY);
         f.getChildren().add(new Rectangle(size,size, Color.valueOf("#524631"))); // #524631
         setAlignment(f.getChildren().get(0), javafx.geometry.Pos.CENTER);
 

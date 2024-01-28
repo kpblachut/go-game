@@ -14,7 +14,7 @@ public class Client {
     private static final String SERVER_IP = "localhost";
     private static final int SERVER_PORT = 12345;
 
-    PrintWriter outputWriter;
+    ObjectOutputStream outputWriter;
 
     NewController controller;
     private GameBoard goban;
@@ -45,10 +45,11 @@ public class Client {
         try {
             Socket socket = new Socket(SERVER_IP, SERVER_PORT);
 
-            BufferedReader inputReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            outputWriter = new PrintWriter(socket.getOutputStream(), true);
+            //BufferedReader inputReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            //outputWriter = new PrintWriter(socket.getOutputStream(), true);
+            outputWriter = new ObjectOutputStream(socket.getOutputStream());
             ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
-
+            /*
             // Set up client's nickname
             System.out.print("Enter your nickname: ");
             String nickname = new BufferedReader(new InputStreamReader(System.in)).readLine();
@@ -78,14 +79,15 @@ public class Client {
                 return;
             }
 
-            // Start a thread to listen for server messages
+            // Start a thread to listen for server messages*/
+
             new Thread(new ClientListener(ois, instance)).start();
 
             // Send messages to the server
             while (true) {
                 System.out.print("Enter message (Type 'exit' to close): ");
                 String message = new BufferedReader(new InputStreamReader(System.in)).readLine();
-                outputWriter.println(message);
+                //outputWriter.println(message);
 
                 if ("exit".equalsIgnoreCase(message)) {
                     break;
@@ -140,9 +142,17 @@ public class Client {
         return scene;
     }
 
-    public void send(String s) {
+    public void send(Object o) {
         if(outputWriter != null) {
-            outputWriter.println(s);
+            try {
+                outputWriter.writeObject(o);
+            } catch (IOException ioe) {
+                ioe.printStackTrace();
+            }
         }
+    }
+
+    public void setLobbyId(int lobbyId) {
+        ((Stage) scene.getWindow()).setTitle("Go Game - Lobby: " + lobbyId);
     }
 }

@@ -2,7 +2,6 @@ package org.example.client;
 
 
 import javafx.scene.layout.GridPane;
-import org.example.client.exceptions.WrongSizeOfBoardException;
 
 public class GameBoard extends GridPane {
 
@@ -16,7 +15,7 @@ public class GameBoard extends GridPane {
         for(int i = 0; i < size; i++) {
             for(int j = 0; j < size; j++) {
                 intersections[i][j] = new Intersection(this, i, j);
-                this.add(intersections[i][j].getField(), i, size-j); //W GridPane na odwrót są współrzędne wysokości
+                this.add(intersections[i][j], i, size-j); //W GridPane na odwrót są współrzędne wysokości
             }
         }
     }
@@ -25,17 +24,14 @@ public class GameBoard extends GridPane {
         return intersections;
     }
 
-    public void updateBoard(char board[][]) throws WrongSizeOfBoardException {
-
-        if(size != board.length){
-            throw new WrongSizeOfBoardException();
-        }
+    public void updateBoard(int board[][]) {
 
         for(int i = 0; i < size; i++) {
             for(int j = 0; j < size; j++) {
                 intersections[i][j].rmStone();
-                if(board[i][j] == 'W' || board[i][j] == 'B') {
-                    Stone stone = new Stone((board[i][j]=='W') ? StoneType.WHITE : StoneType.BLACK);
+                if(board[i][j] == 1 || board[i][j] == 2) {
+                    Stone stone = new Stone((board[i][j]==1) ? StoneType.WHITE : StoneType.BLACK);
+                    intersections[i][j].placeStone(stone);
                 }
             }
         }

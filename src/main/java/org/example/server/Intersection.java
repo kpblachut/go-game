@@ -50,16 +50,54 @@ public class Intersection {
     public Set<Chain> getNeighbours() {
         Set<Chain> neighbours = new HashSet<Chain>();
 
-        int[] dx = {-1,0,1,0}, dy = {0,-1,0,1};
-        for (int i = 0; i < dx.length ; i++) {
+        int[] dx = {-1, 0, 1, 0}, dy = {0, -1, 0, 1};
+        for (int i = 0; i < dx.length; i++) {
             int newX = x + dx[i];
             int newY = y + dy[i];
 
-            if (gameBoard.isInRange(newX, newY)) {
+            if (gameBoard.isInBoard(newX, newY)) {
                 Intersection neighbour = gameBoard.getIntersection(newX, newY);
                 if (neighbour.chain != null) {
                     neighbours.add(neighbour.chain);
                 }
             }
+        }
+        return  neighbours;
+    }
+
+    public Set<Intersection> getEmptyNeighbors() {
+        Set<Intersection> neighbours = new HashSet<Intersection>();
+
+        int[] dx = {-1, 0, 1, 0}, dy = {0, -1, 0, 1};
+        for (int i = 0; i < dx.length; i++) {
+            int newX = x + dx[i];
+            int newY = y + dy[i];
+
+            if (gameBoard.isInBoard(newX, newY)) {
+                Intersection neighbour = gameBoard.getIntersection(newX, newY);
+                if (neighbour.isEmpty()) {
+                    neighbours.add(neighbour);
+                }
+            }
+        }
+        return  neighbours;
+    }
+
+    public Set<Intersection> getEmptyOrDeadNeighbours(Set<Intersection> deadChains) {
+        Set<Intersection> neighbours = new HashSet<Intersection>();
+
+        int[] dx = {-1, 0, 1, 0}, dy = {0, -1, 0, 1};
+        for (int i = 0; i < dx.length; i++) {
+            int newX = x + dx[i];
+            int newY = y + dy[i];
+
+            if (gameBoard.isInBoard(newX, newY)) {
+                Intersection neighbour = gameBoard.getIntersection(newX, newY);
+                if (neighbour.isEmpty() || deadChains.contains(neighbour.getChain())) {
+                    neighbours.add(neighbour);
+                }
+            }
+        }
+        return  neighbours;
     }
 }

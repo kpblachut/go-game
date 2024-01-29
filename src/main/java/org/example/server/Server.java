@@ -45,29 +45,11 @@ public class Server {
         }
     }
 
-    public String generateLobbyCode() {
-        // Generate a simple lobby code for demonstration purposes
-        return String.valueOf((int)(Math.random() * 10000));
-    }
 
-    public void createLobby(String name, String code, int size) {
-        Lobby newLobby = new Lobby(name, code, size);
-        lobbies.put(name, newLobby);
-    }
 
-    //Funkcje których narazie nie potrzebujemy
-    public void broadcastMessageInLobby(String message, String lobbyName, ClientHandler sender) {
-        /*
-        if (lobbies.containsKey(lobbyName)) {
-            List<ClientHandler> lobbyClients = lobbies.get(lobbyName);
-            for (ClientHandler client : lobbyClients) {
-                if (client != sender) {
-                    client.sendMessage(message);
-                }
-            }
-        }
-        */
-    }
+
+
+
 
     public void removeClient(ClientHandler clientHandler) {
         clients.remove(clientHandler);

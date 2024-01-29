@@ -57,7 +57,8 @@ public class Client {
             new Thread(new ClientListener(ois, instance)).start();
 
         } catch (IOException e) {
-            quit();
+            System.out.println("Didn't reach the server");
+            gexit = true;
             //e.printStackTrace();
         }
     }
@@ -91,7 +92,8 @@ public class Client {
                     } else {continue;}
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                System.out.println("Closed socket!");
+                //e.printStackTrace();
             }
         }
     }

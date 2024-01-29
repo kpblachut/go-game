@@ -207,7 +207,7 @@ public class GameBoard {
         if(P1.getId() != 1 || P2.getId() != 2) throw new InvalidParameterException("Incorrect Players entered. One should have an id == 1 and P2 an id == 2, here P1.id = "+P1.getId()+" and P2.id = "+P2.getId());
         if(gameTurn.getBoardState().length != width || gameTurn.getBoardState()[0].length != height ) throw new InvalidGameTurnEncounteredException("Incompatible board dimensions between GameBoard and given GameTurn");
 
-        int[][] boardState = gameTurn.getBoardState();
+        Integer[][] boardState = gameTurn.getBoardState();
         for (int x = 0; x < width ; x++) {
             for (int y = 0; y < height ; y++) {
                 switch (boardState[x][y]) {

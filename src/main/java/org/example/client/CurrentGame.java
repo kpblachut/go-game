@@ -8,10 +8,11 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import org.example.NewController;
+import org.example.Request;
+import org.example.Response;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Objects;
 
 public class CurrentGame {

@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.Set;
 
 public class GameTurn {
-    private final int[][] boardState;
+    private final Integer[][] boardState;
     private final int x, y;
     private final int hashcode;
     private final int capturedStones;
@@ -18,14 +18,14 @@ public class GameTurn {
         hashcode = source.hashcode;
         capturedStones = source.capturedStones;
         passCount = source.passCount;
-        boardState = new int[width][height];
+        boardState = new Integer[width][height];
         for (int i = 0; i < width ; i++) {
             boardState[i] = source.boardState[i].clone();
         }
     }
 
     public GameTurn(int width, int height) {
-        boardState = new int[width][height];
+        boardState = new Integer[width][height];
         capturedStones = 0;
         passCount = 0;
 
@@ -50,7 +50,7 @@ public class GameTurn {
         int width = prev.boardState.length;
         int height = prev.boardState[0].length;
 
-        boardState = new int[width][height];
+        boardState = new Integer[width][height];
         for (int i = 0; i < width ; i++) {
             boardState[i] = prev.boardState[i].clone();
         }
@@ -102,7 +102,7 @@ public class GameTurn {
         return x;
     }
 
-    public int[][] getBoardState() {
+    public Integer[][] getBoardState() {
         return boardState;
     }
 

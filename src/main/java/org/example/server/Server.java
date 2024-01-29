@@ -28,7 +28,7 @@ public class Server {
                 Socket clientSocket = serverSocket.accept();
                 System.out.println("New client connected: " + clientSocket);
 
-                ClientHandler clientHandler = new ClientHandler(clientSocket, this, lobbies);
+                ClientHandler clientHandler = new ClientHandler(clientSocket, this);
                 clients.add(clientHandler);
                 new Thread(clientHandler).start();
             }
@@ -46,26 +46,24 @@ public class Server {
     }
 
 
-
-
-
-
-
     public void removeClient(ClientHandler clientHandler) {
         clients.remove(clientHandler);
         System.out.println("Client disconnected: " + clientHandler.getClientName());
     }
 
-    public void removeClientFromLobby(ClientHandler clientHandler, String lobbyName) {
-        /*
-        if (lobbies.containsKey(lobbyName)) {
-            List<ClientHandler> lobbyClients = lobbies.get(lobbyName);
-            lobbyClients.remove(clientHandler);
-            // Remove the lobby if there are no clients left
-            if (lobbyClients.isEmpty()) {
-                lobbies.remove(lobbyName);
-            }
-        }
-        */
+    public Lobby createLobby(int boardSize) {
+        Lobby lobby = new Lobby(boardSize);
+        lobbies.put(Integer.toString(lobby.getLobbyCode()), lobby);
+        return lobby;
     }
+    public void joinLobby(String lobbyCode, ClientHandler clientHandler) {
+        Lobby lobby = lobbies.get(lobbyCode);
+        lobby.addPlayer(clientHandler);
+    }
+
+    public void createGame(int size) {
+
+    }
+
+
 }

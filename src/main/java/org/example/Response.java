@@ -1,4 +1,4 @@
-package org.example.client;
+package org.example;
 
 import java.io.Serializable;
 
@@ -21,7 +21,19 @@ public class Response implements Serializable {
         this.board = board;
     }
 
+    public void setLobbyId(Integer lobbyId) {
+        this.lobbyId = lobbyId;
+    }
+
     public Integer[][] getBoard(){
         return board;
+    }
+
+    public Integer getLobbyId() {
+        return lobbyId;
+    }
+
+    public Integer getPlayer() {
+        return player;
     }
 }

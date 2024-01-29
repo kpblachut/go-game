@@ -1,30 +1,25 @@
 package org.example.server;
 
-import org.example.client.Response;
-
 import java.io.*;
 import java.net.Socket;
 import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import org.example.Request;
+import org.example.Response;
 
 public class ClientHandler implements Runnable {
     private Socket clientSocket;
     private Server server;
-    //private BufferedReader inputReader;
     private ObjectInputStream inputReader;
-    //private PrintWriter outputWriter;
     private ObjectOutputStream outputWriter;
+    private Lobby lobby;
     private String clientName;
     private String currentLobby;
     private String lobbyCode;
-    private Map<String, Lobby> lobbies;
     Lobby MyLobby;
 
-    public ClientHandler(Socket clientSocket, Server server, Map<String, Lobby> lobbies) {
+    public ClientHandler(Socket clientSocket, Server server) {
         this.clientSocket = clientSocket;
         this.server = server;
-        this.lobbies = lobbies;
         try {
             inputReader = new ObjectInputStream(clientSocket.getInputStream());
             outputWriter = new ObjectOutputStream(clientSocket.getOutputStream());
@@ -50,10 +45,22 @@ public class ClientHandler implements Runnable {
     @Override
     public void run() {
         try {
-            Object clientMessage;
+            Request clientMessage;
             try {
-                while ((clientMessage = inputReader.readObject()) != null) {
+                while ((clientMessage = (Request) inputReader.readObject()) != null) {
+                    if(clientMessage.getSize() != null) {
+                        // Create new game
+                        lobby = server.createLobby(clientMessage.getSize());
+                        lobby.addPlayer(this);
+                        Response response = new Response();
+                        response.setBoard(lobby.getGameBoard().getGameRecord().getLastTurn().getBoardState());
+                        response.setPlayer(123);
+                        response.setLobbyId(lobby.getLobbyCode());
+                        System.out.println(Arrays.deepToString(response.getBoard()));
 
+                        outputWriter.writeObject(response);
+                        outputWriter.reset();
+                    }
                 }
             } catch (ClassNotFoundException e) {}
         } catch (IOException e) {
@@ -61,7 +68,6 @@ public class ClientHandler implements Runnable {
         } finally {
             // Remove the client from the lobby and the server when the connection is closed
             if (currentLobby != null) {
-                server.removeClientFromLobby(this, currentLobby);
                 server.broadcastMessage(clientName + " has left lobby: " + currentLobby, this);
             }
             server.removeClient(this);

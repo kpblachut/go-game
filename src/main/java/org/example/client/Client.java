@@ -1,14 +1,13 @@
 package org.example.client;
 
-import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.example.NewController;
+import org.example.Response;
 
 import java.io.*;
 import java.net.Socket;
-import java.util.zip.GZIPOutputStream;
 
 public class Client {
     private static final String SERVER_IP = "localhost";
@@ -93,7 +92,7 @@ public class Client {
                 }
             } catch (Exception e) {
                 System.out.println("Closed socket!");
-                //e.printStackTrace();
+                e.printStackTrace();
             }
         }
     }

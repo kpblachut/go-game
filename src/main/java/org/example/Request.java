@@ -1,4 +1,4 @@
-package org.example.client;
+package org.example;
 
 import java.io.Serializable;
 
@@ -57,5 +57,33 @@ public class Request implements Serializable {
 
     public void setY(Integer y) {
         this.y = y;
+    }
+
+    public Integer getRandomColor() {
+        return randomColor;
+    }
+
+    public Integer getY() {
+        return y;
+    }
+
+    public Integer getPlayerId() {
+        return playerId;
+    }
+
+    public Integer getLobbyId() {
+        return lobbyId;
+    }
+
+    public Integer getGameMode() {
+        return gameMode;
+    }
+
+    public Integer getX() {
+        return x;
+    }
+
+    public Integer getSize() {
+        return size;
     }
 }

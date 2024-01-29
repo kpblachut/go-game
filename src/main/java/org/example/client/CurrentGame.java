@@ -47,6 +47,8 @@ public class CurrentGame {
         controller.getSaveGameItem().setOnAction(this::saveGame);
         controller.getQuitItem().setOnAction(this::quit);
         controller.getLoadGameItem().setOnAction(this::ShowLGPopUp);
+        controller.getRedoItem().setOnAction(this::redo);
+        controller.getRedoItem().setOnAction(this::undo);
         goban = client.getGoban();
         sng = true;
         log = false;
@@ -215,6 +217,13 @@ public class CurrentGame {
         /*TODO
 
          */
+    }
+
+    private void redo(ActionEvent event){
+        //TODO
+    }
+    private void undo(ActionEvent event){
+        //TODO
     }
 
     private void NewGame(ActionEvent e, int size, String color, Stage popek) {

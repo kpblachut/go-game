@@ -1,0 +1,180 @@
+@startuml
+
+/' diagram meta data start
+config=StructureConfiguration;
+{
+  "projectClassification": {
+    "searchMode": "OpenProject", // OpenProject, AllProjects
+    "includedProjects": "",
+    "pathEndKeywords": "*.impl",
+    "isClientPath": "",
+    "isClientName": "",
+    "isTestPath": "",
+    "isTestName": "",
+    "isMappingPath": "",
+    "isMappingName": "",
+    "isDataAccessPath": "",
+    "isDataAccessName": "",
+    "isDataStructurePath": "",
+    "isDataStructureName": "",
+    "isInterfaceStructuresPath": "",
+    "isInterfaceStructuresName": "",
+    "isEntryPointPath": "",
+    "isEntryPointName": "",
+    "treatFinalFieldsAsMandatory": false
+  },
+  "graphRestriction": {
+    "classPackageExcludeFilter": "org.example",
+    "classPackageIncludeFilter": "",
+    "classNameExcludeFilter": "",
+    "classNameIncludeFilter": "",
+    "methodNameExcludeFilter": "",
+    "methodNameIncludeFilter": "",
+    "removeByInheritance": "", // inheritance/annotation based filtering is done in a second step
+    "removeByAnnotation": "",
+    "removeByClassPackage": "", // cleanup the graph after inheritance/annotation based filtering is done
+    "removeByClassName": "",
+    "cutMappings": false,
+    "cutEnum": true,
+    "cutTests": true,
+    "cutClient": true,
+    "cutDataAccess": false,
+    "cutInterfaceStructures": false,
+    "cutDataStructures": false,
+    "cutGetterAndSetter": true,
+    "cutConstructors": true
+  },
+  "graphTraversal": {
+    "forwardDepth": 3,
+    "backwardDepth": 3,
+    "classPackageExcludeFilter": "",
+    "classPackageIncludeFilter": "",
+    "classNameExcludeFilter": "",
+    "classNameIncludeFilter": "",
+    "methodNameExcludeFilter": "",
+    "methodNameIncludeFilter": "",
+    "hideMappings": false,
+    "hideDataStructures": false,
+    "hidePrivateMethods": true,
+    "hideInterfaceCalls": true, // indirection: implementation -> interface (is hidden) -> implementation
+    "onlyShowApplicationEntryPoints": false, // root node is included
+    "useMethodCallsForStructureDiagram": "ForwardOnly" // ForwardOnly, BothDirections, No
+  },
+  "details": {
+    "aggregation": "GroupByClass", // ByClass, GroupByClass, None
+    "showClassGenericTypes": true,
+    "showMethods": true,
+    "showMethodParameterNames": true,
+    "showMethodParameterTypes": true,
+    "showMethodReturnType": true,
+    "showPackageLevels": 2,
+    "showDetailedClassStructure": true
+  },
+  "rootClass": "org.example.App",
+  "extensionCallbackMethod": "" // qualified.class.name#methodName - signature: public static String method(String)
+}
+diagram meta data end '/
+
+
+
+digraph g {
+    rankdir="TB"
+    splines=polyline
+    
+
+'nodes 
+subgraph cluster_1322970774 { 
+   	label=example
+	labeljust=l
+	fillcolor="#ececec"
+	style=filled
+   
+   App1526836320[
+	label=<<TABLE BORDER="1" CELLBORDER="0" CELLPADDING="4" CELLSPACING="0">
+<TR><TD ALIGN="LEFT" >(C)App</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >+ main(args: String[])</TD></TR>
+<TR><TD ALIGN="LEFT" >+ start(stage: Stage)</TD></TR>
+</TABLE>>
+	style=filled
+	margin=0
+	shape=plaintext
+	fillcolor="#FFFFFF"
+];
+
+subgraph cluster_756810545 { 
+   	label=client
+	labeljust=l
+	fillcolor="#d8d8d8"
+	style=filled
+   
+   Client521715431[
+	label=<<TABLE BORDER="1" CELLBORDER="0" CELLPADDING="4" CELLSPACING="0">
+<TR><TD ALIGN="LEFT" >(C)Client</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >#   cg: CurrentGame [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >#   controller: NewController [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >#   gexit: boolean [1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   goban: GameBoard [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >#   outputWriter: ObjectOutputStream [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   scene: Scene [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >#   socket: Socket [0..1]</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >+ handle(serverObject: Response)</TD></TR>
+<TR><TD ALIGN="LEFT" >+ quit()</TD></TR>
+<TR><TD ALIGN="LEFT" >+ send(o: Object)</TD></TR>
+<TR><TD ALIGN="LEFT" >+ startClient()</TD></TR>
+</TABLE>>
+	style=filled
+	margin=0
+	shape=plaintext
+	fillcolor="#FFFFFF"
+];
+
+GameBoard521715431[
+	label=<<TABLE BORDER="1" CELLBORDER="0" CELLPADDING="4" CELLSPACING="0">
+<TR><TD ALIGN="LEFT" >(C)GameBoard</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >-   intersections: Intersection[][] [0..*]</TD></TR>
+<TR><TD ALIGN="LEFT" >#   size: int [1]</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >+ updateBoard(board: Integer[][])</TD></TR>
+</TABLE>>
+	style=filled
+	margin=0
+	shape=plaintext
+	fillcolor="#FFFFFF"
+];
+
+Intersection521715431[
+	label=<<TABLE BORDER="1" CELLBORDER="0" CELLPADDING="4" CELLSPACING="0">
+<TR><TD ALIGN="LEFT" >(C)Intersection</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >#   eventHandler: EventHandler&lt;MouseEvent&gt; [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >#   eventHandler2: EventHandler&lt;MouseEvent&gt; [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >#   gb: GameBoard [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >#   shadow: Circle [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >#   stone: Stone [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >#   x: int [1]</TD></TR>
+<TR><TD ALIGN="LEFT" >#   y: int [1]</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >- BuildField(f: StackPane, border: int)</TD></TR>
+<TR><TD ALIGN="LEFT" >+ placeStone(stone: Stone)</TD></TR>
+<TR><TD ALIGN="LEFT" >+ rmStone()</TD></TR>
+</TABLE>>
+	style=filled
+	margin=0
+	shape=plaintext
+	fillcolor="#FFFFFF"
+];
+} 
+} 
+
+'edges    
+Client521715431 -> GameBoard521715431[label="goban
+[0..1]"];
+GameBoard521715431 -> Intersection521715431[label="intersections
+[0..*]"];
+    
+}
+@enduml

@@ -240,8 +240,8 @@ public class CurrentGame {
 
     private void newBoard(int size){
         Platform.runLater(()->{
-            controller.getGamePlace().getChildren().remove(goban);});
-        goban = null;
+            controller.getGamePlace().getChildren().remove(goban);goban = null;});
+
         goban = new GameBoard(size);
         AddEventHandlers(goban.getIsecs());
         Platform.runLater(()->{controller.getGamePlace().getChildren().add(goban);});

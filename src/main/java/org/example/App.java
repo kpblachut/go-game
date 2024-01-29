@@ -27,13 +27,15 @@ public class App extends Application
 
         Client BAlice = new Client(controller);
         BAlice.setScene(scene);
-
         stage.setTitle("Go Game");
         stage.setScene(scene);
+        stage.show();
+        BAlice.startClient();
         stage.setOnCloseRequest(e -> {
+            BAlice.quit();
             Platform.exit();
         });
-        stage.show();
+
         stage.setResizable(false);
     }
 }

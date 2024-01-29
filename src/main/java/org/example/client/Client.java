@@ -21,6 +21,9 @@ public class Client {
     private Scene scene;
     static Client instance;
 
+    boolean gexit = false;
+    Socket socket;
+
     CurrentGame cg;
 
     /*
@@ -39,64 +42,24 @@ public class Client {
         });
 
         cg = new CurrentGame(this, controller);
+
+        System.out.println("Client initialised");
     }
 
     public void startClient() {
         try {
-            Socket socket = new Socket(SERVER_IP, SERVER_PORT);
+            System.out.println("starting client");
+            socket = new Socket(SERVER_IP, SERVER_PORT);
 
-            //BufferedReader inputReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            //outputWriter = new PrintWriter(socket.getOutputStream(), true);
             outputWriter = new ObjectOutputStream(socket.getOutputStream());
             ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
-            /*
-            // Set up client's nickname
-            System.out.print("Enter your nickname: ");
-            String nickname = new BufferedReader(new InputStreamReader(System.in)).readLine();
-            outputWriter.println(nickname);
-
-            // Menu to choose between creating and joining a lobby
-            System.out.println("Choose an option:");
-            System.out.println("1. Create a lobby");
-            System.out.println("2. Join a lobby");
-
-            int choice = Integer.parseInt(new BufferedReader(new InputStreamReader(System.in)).readLine());
-
-            if (choice == 1) {
-                outputWriter.println("CREATE_LOBBY");
-            } else if (choice == 2) {
-                System.out.print("Enter the lobby name to join: ");
-                String lobbyToJoin = new BufferedReader(new InputStreamReader(System.in)).readLine();
-
-                // For simplicity, the lobby code is assumed to be the same as the lobby name
-                System.out.print("Enter the lobby code: ");
-                String lobbyCode = new BufferedReader(new InputStreamReader(System.in)).readLine();
-
-                outputWriter.println("JOIN_LOBBY " + lobbyToJoin + " " + lobbyCode);
-            } else {
-                System.out.println("Invalid choice. Exiting...");
-                socket.close();
-                return;
-            }
-
-            // Start a thread to listen for server messages*/
 
             new Thread(new ClientListener(ois, instance)).start();
 
-            // Send messages to the server
-            while (true) {
-                System.out.print("Enter message (Type 'exit' to close): ");
-                String message = new BufferedReader(new InputStreamReader(System.in)).readLine();
-                //outputWriter.println(message);
-
-                if ("exit".equalsIgnoreCase(message)) {
-                    break;
-                }
-            }
-
-            socket.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Didn't reach the server");
+            gexit = true;
+            //e.printStackTrace();
         }
     }
 
@@ -110,18 +73,27 @@ public class Client {
             //this.reader = reader;
             this.ois = ois;
             this.instance = instance;
+            System.out.println("Client listener initialised");
         }
 
         @Override
         public void run() {
             try {
                 //String serverMessage;
+                System.out.println("listening for objects");
                 Object serverObject;
-                while ((serverObject = ois.readObject()) != null) {
-                    instance.handle(serverObject);
+                System.out.println("sth");
+                while ((serverObject = ois.readObject()) != null && !instance.gexit) {
+                    if(serverObject instanceof Response){
+                        Response so = (Response) serverObject;
+                        //System.out.println(so.getBoard());
+                        //System.out.println("getting object from server");
+                        instance.handle(so);
+                    } else {continue;}
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                System.out.println("Closed socket!");
+                //e.printStackTrace();
             }
         }
     }
@@ -130,7 +102,8 @@ public class Client {
         return goban;
     }
 
-    public void handle(Object serverObject) {
+    public void handle(Response serverObject) {
+        System.out.println("handling object from server");
         cg.handleInput(serverObject);
     }
 
@@ -145,7 +118,9 @@ public class Client {
     public void send(Object o) {
         if(outputWriter != null) {
             try {
-                outputWriter.writeObject(o);
+                System.out.println("sending object to server");
+                outputWriter.writeObject((Object) o);
+                outputWriter.reset();
             } catch (IOException ioe) {
                 ioe.printStackTrace();
             }
@@ -153,6 +128,15 @@ public class Client {
     }
 
     public void setLobbyId(int lobbyId) {
-        ((Stage) scene.getWindow()).setTitle("Go Game - Lobby: " + lobbyId);
+        System.out.println("Changing name...");
+        Platform.runLater(()->{((Stage) scene.getWindow()).setTitle("Go Game - Lobby: " + lobbyId);});
+    }
+
+    public void quit(){
+        System.out.println("Quitting");
+        gexit = true;
+        if(socket!=null && socket.isConnected()){
+            try{socket.close();}catch(IOException e){e.printStackTrace();}
+        }
     }
 }

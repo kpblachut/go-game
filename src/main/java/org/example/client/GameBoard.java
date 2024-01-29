@@ -3,6 +3,8 @@ package org.example.client;
 
 import javafx.scene.layout.GridPane;
 
+import java.util.Objects;
+
 public class GameBoard extends GridPane {
 
     private Intersection[][] intersections;
@@ -24,13 +26,14 @@ public class GameBoard extends GridPane {
         return intersections;
     }
 
-    public void updateBoard(int board[][]) {
-
+    public void updateBoard(Integer[][] board) {
+        System.out.println("Updatuje goban!");
         for(int i = 0; i < size; i++) {
             for(int j = 0; j < size; j++) {
                 intersections[i][j].rmStone();
-                if(board[i][j] == 1 || board[i][j] == 2) {
-                    Stone stone = new Stone((board[i][j]==1) ? StoneType.WHITE : StoneType.BLACK);
+                if(Objects.equals(board[i][j], 1) || Objects.equals(board[i][j],2)) {
+                    Stone stone = new Stone((Objects.equals(board[i][j],1)) ? StoneType.WHITE : StoneType.BLACK);
+                    System.out.println("placing stone on: " + i+" "+j);
                     intersections[i][j].placeStone(stone);
                 }
             }

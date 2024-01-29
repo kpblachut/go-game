@@ -9,6 +9,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import org.example.NewController;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Objects;
@@ -18,6 +19,7 @@ public class CurrentGame {
     Integer myName=1234, opName; //1234 - test
     Integer whitePlayer, blackPlayer; //Moim zdaniem niekonieczne, możemy oznaczać white i black jako 1 i 2 w tablicy
     int lobbyId;
+    File lfile;
 
     private boolean myTurn;
     private boolean sng;
@@ -39,6 +41,7 @@ public class CurrentGame {
         controller.getLoadGameItem().setOnAction(this::ShowLGPopUp);
         goban = client.getGoban();
         sng = true;
+        lfile = null;
     }
 
     public void handleInput(Response input) {
@@ -144,11 +147,8 @@ public class CurrentGame {
             Scene dialogScene = new Scene(popupLayout);
             popek.setTitle("Play with bot");
             popek.setScene(dialogScene);
-            /*TODO
-            Tutaj dodac obsluga fileExplorator i przekazywanie pliku do ładowania
-            + jeszcze zeby popup sie zamykał kiedy sie juz wlaczy nowa gre
-            */
-            popControl.getLoadButton().setOnAction(e -> LoadGame(e, popek));
+
+            popControl.getLoadButton().setOnAction(e -> LoadGame(e, popek, popControl));
 
             Platform.runLater(popek::show);
         } catch (IOException e) {
@@ -229,9 +229,10 @@ public class CurrentGame {
          */
     }
 
-    private void LoadGame(ActionEvent event,/* cos jeszcze, pewnie plik ze stackiem*/ Stage popek){
+    private void LoadGame(ActionEvent event,/* cos jeszcze, pewnie plik ze stackiem*/ Stage popek, LGPController popControl){
         sng = true;
         System.out.println("Loading game...");
+        try{lfile = popControl.getFile(); System.out.println(lfile.getName());}catch(NullPointerException e){lfile = null;}
         Platform.runLater(popek::close);
         //TODO
     }

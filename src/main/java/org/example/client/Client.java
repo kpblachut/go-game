@@ -22,7 +22,7 @@ public class Client {
     static Client instance;
 
     boolean gexit = false;
-    Socket sk;
+    Socket socket;
 
     CurrentGame cg;
 
@@ -49,17 +49,16 @@ public class Client {
     public void startClient() {
         try {
             System.out.println("starting client");
-            Socket socket = new Socket(SERVER_IP, SERVER_PORT);
-            sk = socket;
-            //BufferedReader inputReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            //outputWriter = new PrintWriter(socket.getOutputStream(), true);
+            socket = new Socket(SERVER_IP, SERVER_PORT);
+
             outputWriter = new ObjectOutputStream(socket.getOutputStream());
             ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
 
             new Thread(new ClientListener(ois, instance)).start();
 
         } catch (IOException e) {
-            e.printStackTrace();
+            quit();
+            //e.printStackTrace();
         }
     }
 
@@ -83,7 +82,7 @@ public class Client {
                 System.out.println("listening for objects");
                 Object serverObject;
                 System.out.println("sth");
-                while ((serverObject = ois.readObject()) != null) {
+                while ((serverObject = ois.readObject()) != null && !instance.gexit) {
                     if(serverObject instanceof Response){
                         Response so = (Response) serverObject;
                         //System.out.println(so.getBoard());
@@ -134,6 +133,8 @@ public class Client {
     public void quit(){
         System.out.println("Quitting");
         gexit = true;
-        try{sk.close();}catch(IOException e){e.printStackTrace();}
+        if(socket!=null && socket.isConnected()){
+            try{socket.close();}catch(IOException e){e.printStackTrace();}
+        }
     }
 }

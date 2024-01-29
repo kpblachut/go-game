@@ -4,11 +4,10 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.AnchorPane?>
 
-
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="150.0" prefWidth="300.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.client.LGPController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="150.0" prefWidth="300.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.client.LGPController">
    <children>
       <Button fx:id="LoadButton" layoutX="213.0" layoutY="63.0" mnemonicParsing="false" text="Load" />
-      <Button fx:id="OPEButton" layoutX="32.0" layoutY="63.0" mnemonicParsing="false" text="Choose" />
+      <Button fx:id="OPEButton" layoutX="32.0" layoutY="63.0" mnemonicParsing="false" onAction="#OpenFiles" text="Choose" />
       <Label fx:id="FNLabel" layoutX="107.0" layoutY="67.0" text="File not selected" />
    </children>
 </AnchorPane>

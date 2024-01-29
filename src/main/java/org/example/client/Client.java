@@ -55,52 +55,9 @@ public class Client {
             //outputWriter = new PrintWriter(socket.getOutputStream(), true);
             outputWriter = new ObjectOutputStream(socket.getOutputStream());
             ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
-            /*
-            // Set up client's nickname
-            System.out.print("Enter your nickname: ");
-            String nickname = new BufferedReader(new InputStreamReader(System.in)).readLine();
-            outputWriter.println(nickname);
-
-            // Menu to choose between creating and joining a lobby
-            System.out.println("Choose an option:");
-            System.out.println("1. Create a lobby");
-            System.out.println("2. Join a lobby");
-
-            int choice = Integer.parseInt(new BufferedReader(new InputStreamReader(System.in)).readLine());
-
-            if (choice == 1) {
-                outputWriter.println("CREATE_LOBBY");
-            } else if (choice == 2) {
-                System.out.print("Enter the lobby name to join: ");
-                String lobbyToJoin = new BufferedReader(new InputStreamReader(System.in)).readLine();
-
-                // For simplicity, the lobby code is assumed to be the same as the lobby name
-                System.out.print("Enter the lobby code: ");
-                String lobbyCode = new BufferedReader(new InputStreamReader(System.in)).readLine();
-
-                outputWriter.println("JOIN_LOBBY " + lobbyToJoin + " " + lobbyCode);
-            } else {
-                System.out.println("Invalid choice. Exiting...");
-                socket.close();
-                return;
-            }
-
-            // Start a thread to listen for server messages*/
 
             new Thread(new ClientListener(ois, instance)).start();
 
-            // Send messages to the server
-//            while (!gexit) {
-////                System.out.print("Enter message (Type 'exit' to close): ");
-////                String message = new BufferedReader(new InputStreamReader(System.in)).readLine();
-////                //outputWriter.println(message);
-////
-////                if ("exit".equalsIgnoreCase(message)) {
-////                    break;
-////                }
-//            }
-//            System.out.println("closing socket");
-//            socket.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -129,8 +86,8 @@ public class Client {
                 while ((serverObject = ois.readObject()) != null) {
                     if(serverObject instanceof Response){
                         Response so = (Response) serverObject;
-                        System.out.println(so.getBoard());
-                        System.out.println("getting object from server");
+                        //System.out.println(so.getBoard());
+                        //System.out.println("getting object from server");
                         instance.handle(so);
                     } else {continue;}
                 }
@@ -162,6 +119,7 @@ public class Client {
             try {
                 System.out.println("sending object to server");
                 outputWriter.writeObject((Object) o);
+                outputWriter.reset();
             } catch (IOException ioe) {
                 ioe.printStackTrace();
             }

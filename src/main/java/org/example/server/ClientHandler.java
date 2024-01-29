@@ -80,32 +80,31 @@ public class ClientHandler implements Runnable {
                     //Testing sending
                     System.out.println("Recieved packet from client");
                     System.out.println("Sending trial board");
-                    String[][] board = new String[13][13];
+                    Integer[][] board = new Integer[13][13];
                     for(int i = 0; i < 13; i++) {
                         for(int j = 0; j < 13; j++){
-                            board[i][j]="EMPTY";
+                            board[i][j]=0;
                         }
                     }
                     outputWriter.writeObject(new Response(board, 1111));
-                    outputWriter.flush();
+                    outputWriter.reset();
 
-                    String[][] board2 = new String[13][13];
-                    for(int i = 0; i < 13; i++) {
-                        for(int j = 0; j < 13; j++){
-                            board2[i][j]="BLACK";
-                        }
-                    }
+                    board[5][5] = 2;
+                    board[6][6] = 1;
 
-                    board2[5][5] = "WHITE";
-                    System.out.println(Arrays.deepToString(board));
                     Response r = new Response();
 
-                    r.setBoard(board2);
-                    r.setPlayer("TEST");
-                    System.out.println(Arrays.deepToString(r.getBoard()));
+                    r.setBoard(board);
+                    r.setPlayer(1234);
+
                     outputWriter.writeObject(r);
-                    outputWriter.flush();
-                    System.out.println(Arrays.deepToString(r.getBoard()));
+                    outputWriter.reset();
+                    Integer[][] board2 = new Integer[13][13];
+                    board2[5][5] = 0;
+                    board2[7][7] = 1;
+                    r.setBoard(board2);
+                    outputWriter.writeObject(r);
+                    outputWriter.reset();
                 }
             } catch (ClassNotFoundException e) {}
         } catch (IOException e) {

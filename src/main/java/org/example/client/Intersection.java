@@ -61,10 +61,11 @@ public class Intersection extends StackPane {
 
     public void rmStone(){
         if(stone != null) {
+            System.out.println("Removing stone from: "+getX()+" "+getY());
             Platform.runLater(() -> {
                 this.getChildren().remove(stone);
+                this.stone = null;
             });
-            this.stone = null;
         }
     }
 

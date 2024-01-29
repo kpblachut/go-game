@@ -11,10 +11,12 @@ import org.example.NewController;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Objects;
 
 public class CurrentGame {
 
-    String myName = "TEST", opName;
+    Integer myName=1234, opName; //1234 - test
+    Integer whitePlayer, blackPlayer; //Moim zdaniem niekonieczne, możemy oznaczać white i black jako 1 i 2 w tablicy
     int lobbyId;
 
     private boolean myTurn;
@@ -44,15 +46,17 @@ public class CurrentGame {
 
          */
         Response ip = (Response) input;
-        if(ip.player != myName){
+        if(!Objects.equals(myName,ip.player)){
             myTurn = false;
             opName = ip.player;
+        } else {myTurn = true;}
+        if(sng && (Objects.equals(myName,ip.player))){
+            whitePlayer = myName;
+        } else if(sng) {
+            blackPlayer = myName;
         }
-        System.out.println(ip.player);
-        System.out.println(Arrays.deepToString(ip.getBoard()));
+
         if(!sng && ip.getBoard().length == goban.size) {
-            System.out.println("updatuje goban odpowiedniego rozmiaru");
-            System.out.println(Arrays.deepToString(ip.getBoard()));
             goban.updateBoard(ip.getBoard());
         } else if (!sng && ip.getBoard().length != goban.size) {
             System.out.println("This shouldn't happen :(");
@@ -120,6 +124,7 @@ public class CurrentGame {
             Scene dialogScene = new Scene(popupLayout);
             popek.setTitle("Play with bot");
             popek.setScene(dialogScene);
+            popControl.getCGButton().setOnAction(e -> NewGameWB(e,popControl.getSizeChoice().getValue(), popek));
             /*TODO
             Tutaj dodac obsluge wysylania nowej gry z popupa
             + jeszcze zeby popup sie zamykał kiedy sie juz wlaczy nowa gre
@@ -152,6 +157,7 @@ public class CurrentGame {
     }
     private void passTurn(ActionEvent event) {
         System.out.println("Passing my turn...");
+        sendOutput(new Request());
         /*TODO
 
          */
@@ -182,7 +188,13 @@ public class CurrentGame {
     private void NewGame(ActionEvent e, int size, Stage popek) {
         sng = true;
         System.out.println("Starting new game, size: " + size);
-        sendOutput(new Request(size, myName,0, 0));
+        //new Request(size, myName,0, 0)
+        Request op = new Request();
+        op.setSize(size);
+        op.setPlayerId(myName);
+        op.setGameMode(0);
+        op.setRandomColor(0);
+        sendOutput(op);
         Platform.runLater(popek::close);
         /*TODO
 
@@ -192,7 +204,10 @@ public class CurrentGame {
     private void JoinGame(ActionEvent e, String code, Stage popek) {
         sng = true;
         System.out.println("Joining game with code: " + code);
-        sendOutput(new Request(Integer.parseInt(code), myName));
+        Request op = new Request();
+        op.setLobbyId(Integer.parseInt(code));
+        op.setPlayerId(myName);
+        sendOutput(op);
         Platform.runLater(popek::close);
         /*TODO
 
@@ -202,7 +217,12 @@ public class CurrentGame {
     private void NewGameWB(ActionEvent e, int size, Stage popek){
         sng = true;
         System.out.println("Starting new game with bot, size: " + size);
-        sendOutput(new Request(size, myName,1, 0));
+        Request op = new Request();
+        op.setSize(size);
+        op.setPlayerId(myName);
+        op.setGameMode(1);
+        op.setRandomColor(0);
+        sendOutput(op);
         Platform.runLater(popek::close);
         /*TODO
 
@@ -235,7 +255,10 @@ public class CurrentGame {
     private void handleSpotMouseClick(MouseEvent event) {
         if (event.getSource() instanceof Intersection clickedSpot && myTurn) { //tutaj nie jestem dumny z tego instanceof, mozna go podmienic na try catcha
             if(clickedSpot.getStone() == null) {
-                sendOutput(new Request(clickedSpot.getX(),clickedSpot.getY(),lobbyId,myName));
+                System.out.println(clickedSpot.getX() + " " + clickedSpot.getY());
+                Request op = new Request();
+                op.setX(clickedSpot.getX()); op.setY(clickedSpot.getY()); op.setLobbyId(lobbyId); op.setPlayerId(myName);
+                sendOutput(op);
             } else {
                 System.out.println("zajete pole");
             }

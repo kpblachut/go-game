@@ -51,9 +51,7 @@ public class LGPController {
     void initialize(){
         fileChooser = new FileChooser();
         fileChooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("Text Files", "*.txt")
-                ,new FileChooser.ExtensionFilter("HTML Files", "*.htm")
-                ,new FileChooser.ExtensionFilter("JSON Files", "*.json")
+                new FileChooser.ExtensionFilter("SAVE Files", "*.save")
         );
     }
 

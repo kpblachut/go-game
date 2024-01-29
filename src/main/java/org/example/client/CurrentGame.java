@@ -8,6 +8,13 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import org.example.NewController;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 
 import java.io.File;
 import java.io.IOException;
@@ -16,13 +23,14 @@ import java.util.Objects;
 
 public class CurrentGame {
 
-    Integer myName=1234, opName; //1234 - test
+    Integer myName, opName; //1234 - test
     Integer whitePlayer, blackPlayer; //Moim zdaniem niekonieczne, możemy oznaczać white i black jako 1 i 2 w tablicy
     int lobbyId;
     File lfile;
 
     private boolean myTurn;
-    private boolean sng;
+    private boolean sng; // Starting new Game
+    private boolean log; // Loading old Game
     Client client;
     NewController controller;
 
@@ -41,6 +49,7 @@ public class CurrentGame {
         controller.getLoadGameItem().setOnAction(this::ShowLGPopUp);
         goban = client.getGoban();
         sng = true;
+        log = false;
         lfile = null;
     }
 
@@ -157,7 +166,12 @@ public class CurrentGame {
     }
     private void passTurn(ActionEvent event) {
         System.out.println("Passing my turn...");
-        sendOutput(new Request());
+        Request pt = new Request();
+        pt.setX(-1);
+        pt.setY(-1);
+        pt.setPlayerId(myName);
+        pt.setLobbyId(lobbyId);
+        sendOutput(pt);
         /*TODO
 
          */
@@ -165,6 +179,12 @@ public class CurrentGame {
 
     private void giveUp(ActionEvent event) {
         System.out.println("Giving up...");
+        Request pt = new Request();
+        pt.setX(-1);
+        pt.setY(-1);
+        pt.setPlayerId(myName);
+        pt.setLobbyId(lobbyId);
+        sendOutput(pt);
         /*TODO
 
          */
@@ -172,6 +192,12 @@ public class CurrentGame {
 
     private void saveGame(ActionEvent event) {
         System.out.println("Saving game...");
+        Request pt = new Request();
+        pt.setX(-1);
+        pt.setY(-1);
+        pt.setPlayerId(myName);
+        pt.setLobbyId(lobbyId);
+        sendOutput(pt);
         /*TODO
 
          */
@@ -179,6 +205,12 @@ public class CurrentGame {
 
     private void quit(ActionEvent event) {
         System.out.println("Quitting game...");
+        Request pt = new Request();
+        pt.setX(-1);
+        pt.setY(-1);
+        pt.setPlayerId(myName);
+        pt.setLobbyId(lobbyId);
+        sendOutput(pt);
         client.quit();
         /*TODO
 
@@ -231,8 +263,18 @@ public class CurrentGame {
 
     private void LoadGame(ActionEvent event,/* cos jeszcze, pewnie plik ze stackiem*/ Stage popek, LGPController popControl){
         sng = true;
+        log = true;
         System.out.println("Loading game...");
-        try{lfile = popControl.getFile(); System.out.println(lfile.getName());}catch(NullPointerException e){lfile = null;}
+        try{
+            lfile = popControl.getFile();
+            System.out.println(lfile.getName());
+            try {
+                String content = readFileToString(lfile.getPath());
+                sendOutput(content);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }catch(NullPointerException e){lfile = null;}
         Platform.runLater(popek::close);
         //TODO
     }
@@ -247,9 +289,11 @@ public class CurrentGame {
         sng = false;
     }
     private void AddEventHandlers(Intersection[][] intersections) { // Tu podmienie potem na gb.getCrossings() powinno dzialac
-        for (int i = 0; i < intersections.length; i++) {
-            for(int j = 0; j < intersections[0].length; j++) {
-                intersections[i][j].setOnMouseClicked(this::handleSpotMouseClick);
+        if(!log) {
+            for (int i = 0; i < intersections.length; i++) {
+                for (int j = 0; j < intersections[0].length; j++) {
+                    intersections[i][j].setOnMouseClicked(this::handleSpotMouseClick);
+                }
             }
         }
     }
@@ -266,5 +310,13 @@ public class CurrentGame {
         } else {
             System.out.println("Czekaj na swoja kolej");
         }
+    }
+
+
+    //Testing new thing
+    private static String readFileToString(String filePath) throws IOException {
+        Path path = Paths.get(filePath);
+        byte[] encoded = Files.readAllBytes(path);
+        return new String(encoded);
     }
 }

@@ -95,7 +95,7 @@ public class CurrentGame {
             Scene dialogScene = new Scene(popupLayout);
             popek.setTitle("Start new game");
             popek.setScene(dialogScene);
-            popControl.getCGButton().setOnAction(e -> NewGame(e,popControl.getSizeChoice().getValue(), popek));
+            popControl.getCGButton().setOnAction(e -> NewGame(e,popControl.getSizeChoice().getValue(),popControl.getColorCBox().getValue(), popek));
             /*TODO
             Tutaj dodac obsluge wysylania nowej gry z popupa
             + jeszcze zeby popup sie zamykał kiedy sie juz wlaczy nowa gre
@@ -136,7 +136,7 @@ public class CurrentGame {
             Scene dialogScene = new Scene(popupLayout);
             popek.setTitle("Play with bot");
             popek.setScene(dialogScene);
-            popControl.getCGButton().setOnAction(e -> NewGameWB(e,popControl.getSizeChoice().getValue(), popek));
+            popControl.getCGButton().setOnAction(e -> NewGameWB(e,popControl.getSizeChoice().getValue(), popControl.getColorCBox().getValue(), popek));
             /*TODO
             Tutaj dodac obsluge wysylania nowej gry z popupa
             + jeszcze zeby popup sie zamykał kiedy sie juz wlaczy nowa gre
@@ -217,15 +217,17 @@ public class CurrentGame {
          */
     }
 
-    private void NewGame(ActionEvent e, int size, Stage popek) {
+    private void NewGame(ActionEvent e, int size, String color, Stage popek) {
         sng = true;
-        System.out.println("Starting new game, size: " + size);
+        System.out.println("Starting new game, size: " + size+" color: " + color);
         //new Request(size, myName,0, 0)
         Request op = new Request();
         op.setSize(size);
         op.setPlayerId(myName);
         op.setGameMode(0);
-        op.setRandomColor(0);
+        int k;
+        if(color.equals("BLK")){k=2;}else if(color.equals("WHT")){k=1;}else{k=0;}
+        op.setRandomColor(k);
         sendOutput(op);
         Platform.runLater(popek::close);
         /*TODO
@@ -246,14 +248,16 @@ public class CurrentGame {
          */
     }
 
-    private void NewGameWB(ActionEvent e, int size, Stage popek){
+    private void NewGameWB(ActionEvent e, int size,String color, Stage popek){
         sng = true;
         System.out.println("Starting new game with bot, size: " + size);
         Request op = new Request();
         op.setSize(size);
         op.setPlayerId(myName);
         op.setGameMode(1);
-        op.setRandomColor(0);
+        int k;
+        if(color.equals("BLK")){k=2;}else if(color.equals("WHT")){k=1;}else{k=0;}
+        op.setRandomColor(k);
         sendOutput(op);
         Platform.runLater(popek::close);
         /*TODO
@@ -296,6 +300,7 @@ public class CurrentGame {
                 }
             }
         }
+        log = false;
     }
     private void handleSpotMouseClick(MouseEvent event) {
         if (event.getSource() instanceof Intersection clickedSpot && myTurn) { //tutaj nie jestem dumny z tego instanceof, mozna go podmienic na try catcha

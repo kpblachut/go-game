@@ -8,6 +8,9 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import org.example.NewController;
+import org.example.Request;
+import org.example.Response;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -22,12 +25,10 @@ import java.util.Objects;
 
 public class CurrentGame {
 
-    Integer myName=1234, opName; //1234 - test
-    Integer whitePlayer, blackPlayer; //Moim zdaniem niekonieczne, możemy oznaczać white i black jako 1 i 2 w tablicy
+    Integer myColor;
     int lobbyId;
     File lfile;
 
-    private boolean myTurn;
     private boolean sng; // Starting new Game
     private boolean log; // Loading old Game
     Client client;
@@ -59,17 +60,8 @@ public class CurrentGame {
 
          */
         Response ip = (Response) input;
-        if(!Objects.equals(myName,ip.player)){
-            myTurn = false;
-            opName = ip.player;
-            System.out.println("Not your turn");
-        } else {myTurn = true;
-            System.out.println("Your Turn");
-        }
-        if(sng && (Objects.equals(myName,ip.player))){
-            whitePlayer = myName;
-        } else if(sng) {
-            blackPlayer = myName;
+        if(sng){
+            goban.setColor(ip.getPlayer());
         }
 
         if(!sng && ip.getBoard().length == goban.size) {
@@ -79,7 +71,7 @@ public class CurrentGame {
         } else if (sng) {
             newBoard(ip.getBoard().length);
             goban.updateBoard(ip.getBoard());
-            lobbyId = ip.lobbyId;
+            lobbyId = ip.getLobbyId();
             client.setLobbyId(lobbyId);
         } else {
             System.out.println("This totally shouldn't happen >:(");
@@ -173,7 +165,7 @@ public class CurrentGame {
         Request pt = new Request();
         pt.setX(-1);
         pt.setY(-1);
-        pt.setPlayerId(myName);
+        pt.setPlayerId(myColor);
         pt.setLobbyId(lobbyId);
         sendOutput(pt);
     }
@@ -183,7 +175,7 @@ public class CurrentGame {
         Request pt = new Request();
         pt.setX(-1);
         pt.setY(-1);
-        pt.setPlayerId(myName);
+        pt.setPlayerId(myColor);
         pt.setLobbyId(lobbyId);
         sendOutput(pt);
     }
@@ -193,7 +185,7 @@ public class CurrentGame {
         Request pt = new Request();
         pt.setX(-1);
         pt.setY(-1);
-        pt.setPlayerId(myName);
+        pt.setPlayerId(myColor);
         pt.setLobbyId(lobbyId);
         sendOutput(pt);
     }
@@ -203,7 +195,7 @@ public class CurrentGame {
         Request pt = new Request();
         pt.setX(-1);
         pt.setY(-1);
-        pt.setPlayerId(myName);
+        pt.setPlayerId(myColor);
         pt.setLobbyId(lobbyId);
         sendOutput(pt);
         client.quit();
@@ -213,7 +205,7 @@ public class CurrentGame {
         Request pt = new Request();
         pt.setX(-1);
         pt.setY(-1);
-        pt.setPlayerId(myName);
+        pt.setPlayerId(myColor);
         pt.setLobbyId(lobbyId);
         sendOutput(pt);
     }
@@ -221,7 +213,7 @@ public class CurrentGame {
         Request pt = new Request();
         pt.setX(-1);
         pt.setY(-1);
-        pt.setPlayerId(myName);
+        pt.setPlayerId(myColor);
         pt.setLobbyId(lobbyId);
         sendOutput(pt);
     }
@@ -229,10 +221,10 @@ public class CurrentGame {
     private void NewGame(ActionEvent e, int size, String color, Stage popek) {
         sng = true;
         System.out.println("Starting new game, size: " + size+" color: " + color);
-        //new Request(size, myName,0, 0)
+        //new Request(size, myColor,0, 0)
         Request op = new Request();
         op.setSize(size);
-        op.setPlayerId(myName);
+        op.setPlayerId(myColor);
         op.setGameMode(0);
         int k;
         if(color.equals("BLK")){k=2;}else if(color.equals("WHT")){k=1;}else{k=0;}
@@ -249,7 +241,7 @@ public class CurrentGame {
         System.out.println("Joining game with code: " + code);
         Request op = new Request();
         op.setLobbyId(Integer.parseInt(code));
-        op.setPlayerId(myName);
+        op.setPlayerId(myColor);
         sendOutput(op);
         Platform.runLater(popek::close);
         /*TODO
@@ -262,7 +254,7 @@ public class CurrentGame {
         System.out.println("Starting new game with bot, size: " + size);
         Request op = new Request();
         op.setSize(size);
-        op.setPlayerId(myName);
+        op.setPlayerId(myColor);
         op.setGameMode(1);
         int k;
         if(color.equals("BLK")){k=2;}else if(color.equals("WHT")){k=1;}else{k=0;}
@@ -312,11 +304,11 @@ public class CurrentGame {
         log = false;
     }
     private void handleSpotMouseClick(MouseEvent event) {
-        if (event.getSource() instanceof Intersection clickedSpot && myTurn) { //tutaj nie jestem dumny z tego instanceof, mozna go podmienic na try catcha
+        if (event.getSource() instanceof Intersection clickedSpot) { //tutaj nie jestem dumny z tego instanceof, mozna go podmienic na try catcha
             if(!clickedSpot.hasStone()) {
                 System.out.println(clickedSpot.getX() + " " + clickedSpot.getY());
                 Request op = new Request();
-                op.setX(clickedSpot.getX()); op.setY(clickedSpot.getY()); op.setLobbyId(lobbyId); op.setPlayerId(myName);
+                op.setX(clickedSpot.getX()); op.setY(clickedSpot.getY()); op.setLobbyId(lobbyId); op.setPlayerId(myColor);
                 sendOutput(op);
             } else {
                 System.out.println("zajete pole");

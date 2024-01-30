@@ -11,15 +11,20 @@ public class ClientHandler implements Runnable {
     private Server server;
     private ObjectInputStream inputReader;
     private ObjectOutputStream outputWriter;
+    private int clientId;
     private Lobby lobby;
+    private boolean inLobby;
+    private String side;
     private String clientName;
     private String currentLobby;
     private String lobbyCode;
     Lobby MyLobby;
 
-    public ClientHandler(Socket clientSocket, Server server) {
+    public ClientHandler(Socket clientSocket, Server server, int clientId) {
         this.clientSocket = clientSocket;
         this.server = server;
+        this.inLobby = false;
+        this.clientId = clientId;
         try {
             inputReader = new ObjectInputStream(clientSocket.getInputStream());
             outputWriter = new ObjectOutputStream(clientSocket.getOutputStream());
@@ -51,7 +56,8 @@ public class ClientHandler implements Runnable {
                     if(clientMessage.getSize() != null) {
                         // Create new game
                         lobby = server.createLobby(clientMessage.getSize());
-                        lobby.addPlayer(this);
+                        inLobby = true;
+
                         Response response = new Response();
                         response.setBoard(lobby.getGameBoard().getGameRecord().getLastTurn().getBoardState());
                         response.setPlayer(123);
@@ -75,4 +81,7 @@ public class ClientHandler implements Runnable {
         }
     }
 
+    public void setSide(String side) {
+        this.side = side;
+    }
 }

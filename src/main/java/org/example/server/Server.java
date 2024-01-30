@@ -3,15 +3,11 @@ package org.example.server;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Server {
     private static final int PORT = 12345;
     private List<ClientHandler> clients = new ArrayList<>();
-    //private Map<String, List<ClientHandler>> lobbies = new HashMap<>();
     private Map<String, Lobby> lobbies = new HashMap<>();
 
 
@@ -27,8 +23,9 @@ public class Server {
             while (true) {
                 Socket clientSocket = serverSocket.accept();
                 System.out.println("New client connected: " + clientSocket);
+                int clientId = new Random().nextInt(9000) + 1000;
 
-                ClientHandler clientHandler = new ClientHandler(clientSocket, this);
+                ClientHandler clientHandler = new ClientHandler(clientSocket, this, clientId);
                 clients.add(clientHandler);
                 new Thread(clientHandler).start();
             }
@@ -56,14 +53,11 @@ public class Server {
         lobbies.put(Integer.toString(lobby.getLobbyCode()), lobby);
         return lobby;
     }
-    public void joinLobby(String lobbyCode, ClientHandler clientHandler) {
-        Lobby lobby = lobbies.get(lobbyCode);
-        lobby.addPlayer(clientHandler);
+
+    public Lobby fetchLobby(String lobbyCode) {
+        return lobbies.get(lobbyCode);
     }
 
-    public void createGame(int size) {
-
-    }
 
 
 }

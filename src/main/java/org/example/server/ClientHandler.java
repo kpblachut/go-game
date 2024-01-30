@@ -1,5 +1,6 @@
 package org.example.server;
 
+import org.example.client.Request;
 import org.example.client.Response;
 
 import java.io.*;
@@ -20,6 +21,9 @@ public class ClientHandler implements Runnable {
     private String lobbyCode;
     private Map<String, Lobby> lobbies;
     Lobby MyLobby;
+
+    //TESTING BOT!
+    Botter bot = new Botter(1);
 
     public ClientHandler(Socket clientSocket, Server server, Map<String, Lobby> lobbies) {
         this.clientSocket = clientSocket;
@@ -71,42 +75,46 @@ public class ClientHandler implements Runnable {
     @Override
     public void run() {
         try {
+            //TESTING
+            Integer[][] board = new Integer[13][13];
+            for(int i = 0; i < 13; i++) {
+                for(int j = 0; j < 13; j++){
+                    board[i][j]=0;
+                }
+            }
+            System.out.println("Sending trial board");
+            outputWriter.writeObject(new Response(board, 1111));
+            outputWriter.reset();
+            Response st = new Response();
+            st.setPlayer(1234);
+            st.setBoard(board);
+            outputWriter.writeObject(st);
+            outputWriter.flush();
+            outputWriter.reset();
+            //Testing
             Object clientMessage;
             try {
                 while ((clientMessage = inputReader.readObject()) != null) {
-                    //TODO
-                    //OG sending
-
-                    //Testing sending
-                    System.out.println("Recieved packet from client");
-                    System.out.println("Sending trial board");
-                    Integer[][] board = new Integer[13][13];
-                    for(int i = 0; i < 13; i++) {
-                        for(int j = 0; j < 13; j++){
-                            board[i][j]=0;
-                        }
+                    Request s = (Request) clientMessage;
+                    //Test
+                    if(s.x!=-1 && s.y!=-1){
+                        board[s.x][s.y]=2;
                     }
-                    outputWriter.writeObject(new Response(board, 1111));
-                    outputWriter.reset();
+                    //printTable(board);
+                    bot.makeMove(board);
+                    if(bot.getX()!=-1){
+                        System.out.println(bot.getX() + " " + bot.getY());
+                        board[bot.getY()][bot.getX()] = 1;
+                    } else System.out.println("PASS");
+                    st.setBoard(board);
 
-                    board[5][5] = 2;
-                    board[6][6] = 1;
-
-                    Response r = new Response();
-
-                    r.setBoard(board);
-                    r.setPlayer(1234);
-
-                    outputWriter.writeObject(r);
-                    outputWriter.reset();
-                    Integer[][] board2 = new Integer[13][13];
-                    board2[5][5] = 0;
-                    board2[7][7] = 1;
-                    r.setBoard(board2);
-                    outputWriter.writeObject(r);
+                    outputWriter.writeObject(st);
+                    outputWriter.flush();
                     outputWriter.reset();
                 }
-            } catch (ClassNotFoundException e) {}
+            } catch (ClassNotFoundException e) {
+                System.out.println("lol");
+            }
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -122,5 +130,14 @@ public class ClientHandler implements Runnable {
 
     public void setLobby(Lobby lobby){
         MyLobby = lobby;
+    }
+    //test method
+    public void printTable(Integer[][] board){
+        for(int i=board.length-1; i>=0; i--){
+            for(int j=0;j<board.length;j++){
+                System.out.print(board[j][i]);
+            }
+            System.out.println();
+        }
     }
 }

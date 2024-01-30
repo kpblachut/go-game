@@ -24,9 +24,11 @@ public class Intersection extends StackPane {
 
     //StackPane field;
     Circle shadow;
+    boolean hs;
 
     public Intersection(GameBoard gb, int x, int y) {
         super();
+        hs = false;
         this.gb = gb;
         this.x = x;
         this.y = y;
@@ -41,25 +43,26 @@ public class Intersection extends StackPane {
     */
 
     public void placeStone(Stone stone){
+        hs=true;
+        double size = 0.4 * ((double) BW / gb.getSize());
         if(this.stone == null) {
-            double size = 0.4 * ((double) BW / gb.getSize());
             this.stone = stone;
-
-            stone.setScaleY(size);
-            stone.setScaleX(size);
-            stone.setStrokeWidth(0.1);
-
-            Platform.runLater(() -> {
-                this.getChildren().add(stone);
-                shadow.setVisible(false);
-                stone.setCenterX(size / 2);
-                stone.setCenterY(size / 2);
-                stone.setVisible(true);
-            });
         }
+        stone.setScaleY(size);
+        stone.setScaleX(size);
+        stone.setStrokeWidth(0.1);
+
+        Platform.runLater(() -> {
+            this.getChildren().add(stone);
+            shadow.setVisible(false);
+            stone.setCenterX(size / 2);
+            stone.setCenterY(size / 2);
+            stone.setVisible(true);
+        });
     }
 
     public void rmStone(){
+        hs=false;
         if(stone != null) {
             System.out.println("Removing stone from: "+getX()+" "+getY());
             Platform.runLater(() -> {
@@ -143,4 +146,8 @@ public class Intersection extends StackPane {
             }
         }
     };
+
+    public boolean hasStone(){
+        return hs;
+    }
 }

@@ -4,8 +4,8 @@ import java.io.Serializable;
 
 public class Request implements Serializable {
     Integer size;
-    Integer x;
-    Integer y;
+    public Integer x;
+    public Integer y;
     Integer lobbyId;
     Integer playerId;
     Integer gameMode;

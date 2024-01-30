@@ -18,12 +18,11 @@ import java.nio.file.Paths;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Objects;
 
 public class CurrentGame {
 
-    Integer myName, opName; //1234 - test
+    Integer myName=1234, opName; //1234 - test
     Integer whitePlayer, blackPlayer; //Moim zdaniem niekonieczne, możemy oznaczać white i black jako 1 i 2 w tablicy
     int lobbyId;
     File lfile;
@@ -63,7 +62,10 @@ public class CurrentGame {
         if(!Objects.equals(myName,ip.player)){
             myTurn = false;
             opName = ip.player;
-        } else {myTurn = true;}
+            System.out.println("Not your turn");
+        } else {myTurn = true;
+            System.out.println("Your Turn");
+        }
         if(sng && (Objects.equals(myName,ip.player))){
             whitePlayer = myName;
         } else if(sng) {
@@ -174,9 +176,6 @@ public class CurrentGame {
         pt.setPlayerId(myName);
         pt.setLobbyId(lobbyId);
         sendOutput(pt);
-        /*TODO
-
-         */
     }
 
     private void giveUp(ActionEvent event) {
@@ -187,9 +186,6 @@ public class CurrentGame {
         pt.setPlayerId(myName);
         pt.setLobbyId(lobbyId);
         sendOutput(pt);
-        /*TODO
-
-         */
     }
 
     private void saveGame(ActionEvent event) {
@@ -200,9 +196,6 @@ public class CurrentGame {
         pt.setPlayerId(myName);
         pt.setLobbyId(lobbyId);
         sendOutput(pt);
-        /*TODO
-
-         */
     }
 
     private void quit(ActionEvent event) {
@@ -214,16 +207,23 @@ public class CurrentGame {
         pt.setLobbyId(lobbyId);
         sendOutput(pt);
         client.quit();
-        /*TODO
-
-         */
     }
 
     private void redo(ActionEvent event){
-        //TODO
+        Request pt = new Request();
+        pt.setX(-1);
+        pt.setY(-1);
+        pt.setPlayerId(myName);
+        pt.setLobbyId(lobbyId);
+        sendOutput(pt);
     }
     private void undo(ActionEvent event){
-        //TODO
+        Request pt = new Request();
+        pt.setX(-1);
+        pt.setY(-1);
+        pt.setPlayerId(myName);
+        pt.setLobbyId(lobbyId);
+        sendOutput(pt);
     }
 
     private void NewGame(ActionEvent e, int size, String color, Stage popek) {
@@ -313,7 +313,7 @@ public class CurrentGame {
     }
     private void handleSpotMouseClick(MouseEvent event) {
         if (event.getSource() instanceof Intersection clickedSpot && myTurn) { //tutaj nie jestem dumny z tego instanceof, mozna go podmienic na try catcha
-            if(clickedSpot.getStone() == null) {
+            if(!clickedSpot.hasStone()) {
                 System.out.println(clickedSpot.getX() + " " + clickedSpot.getY());
                 Request op = new Request();
                 op.setX(clickedSpot.getX()); op.setY(clickedSpot.getY()); op.setLobbyId(lobbyId); op.setPlayerId(myName);

@@ -78,17 +78,18 @@ public class Client {
         @Override
         public void run() {
             try {
-                //String serverMessage;
                 System.out.println("listening for objects");
                 Object serverObject;
                 System.out.println("sth");
                 while ((serverObject = ois.readObject()) != null && !instance.gexit) {
-                    if(serverObject instanceof Response){
+                    if(serverObject instanceof Response) {
                         Response so = (Response) serverObject;
                         //System.out.println(so.getBoard());
                         //System.out.println("getting object from server");
                         instance.handle(so);
-                    } else {continue;}
+                    } else {
+                        continue;
+                    }
                 }
             } catch (Exception e) {
                 System.out.println("Closed socket!");

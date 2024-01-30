@@ -8,8 +8,13 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import org.example.NewController;
-import org.example.Request;
-import org.example.Response;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 
 import java.io.File;
 import java.io.IOException;
@@ -23,7 +28,8 @@ public class CurrentGame {
     File lfile;
 
     private boolean myTurn;
-    private boolean sng;
+    private boolean sng; // Starting new Game
+    private boolean log; // Loading old Game
     Client client;
     NewController controller;
 
@@ -40,8 +46,11 @@ public class CurrentGame {
         controller.getSaveGameItem().setOnAction(this::saveGame);
         controller.getQuitItem().setOnAction(this::quit);
         controller.getLoadGameItem().setOnAction(this::ShowLGPopUp);
+        controller.getRedoItem().setOnAction(this::redo);
+        controller.getRedoItem().setOnAction(this::undo);
         goban = client.getGoban();
         sng = true;
+        log = false;
         lfile = null;
     }
 
@@ -53,7 +62,10 @@ public class CurrentGame {
         if(!Objects.equals(myName,ip.player)){
             myTurn = false;
             opName = ip.player;
-        } else {myTurn = true;}
+            System.out.println("Not your turn");
+        } else {myTurn = true;
+            System.out.println("Your Turn");
+        }
         if(sng && (Objects.equals(myName,ip.player))){
             whitePlayer = myName;
         } else if(sng) {
@@ -87,7 +99,7 @@ public class CurrentGame {
             Scene dialogScene = new Scene(popupLayout);
             popek.setTitle("Start new game");
             popek.setScene(dialogScene);
-            popControl.getCGButton().setOnAction(e -> NewGame(e,popControl.getSizeChoice().getValue(), popek));
+            popControl.getCGButton().setOnAction(e -> NewGame(e,popControl.getSizeChoice().getValue(),popControl.getColorCBox().getValue(), popek));
             /*TODO
             Tutaj dodac obsluge wysylania nowej gry z popupa
             + jeszcze zeby popup sie zamykał kiedy sie juz wlaczy nowa gre
@@ -128,7 +140,7 @@ public class CurrentGame {
             Scene dialogScene = new Scene(popupLayout);
             popek.setTitle("Play with bot");
             popek.setScene(dialogScene);
-            popControl.getCGButton().setOnAction(e -> NewGameWB(e,popControl.getSizeChoice().getValue(), popek));
+            popControl.getCGButton().setOnAction(e -> NewGameWB(e,popControl.getSizeChoice().getValue(), popControl.getColorCBox().getValue(), popek));
             /*TODO
             Tutaj dodac obsluge wysylania nowej gry z popupa
             + jeszcze zeby popup sie zamykał kiedy sie juz wlaczy nowa gre
@@ -158,43 +170,73 @@ public class CurrentGame {
     }
     private void passTurn(ActionEvent event) {
         System.out.println("Passing my turn...");
-        sendOutput(new Request());
-        /*TODO
-
-         */
+        Request pt = new Request();
+        pt.setX(-1);
+        pt.setY(-1);
+        pt.setPlayerId(myName);
+        pt.setLobbyId(lobbyId);
+        sendOutput(pt);
     }
 
     private void giveUp(ActionEvent event) {
         System.out.println("Giving up...");
-        /*TODO
-
-         */
+        Request pt = new Request();
+        pt.setX(-1);
+        pt.setY(-1);
+        pt.setPlayerId(myName);
+        pt.setLobbyId(lobbyId);
+        sendOutput(pt);
     }
 
     private void saveGame(ActionEvent event) {
         System.out.println("Saving game...");
-        /*TODO
-
-         */
+        Request pt = new Request();
+        pt.setX(-1);
+        pt.setY(-1);
+        pt.setPlayerId(myName);
+        pt.setLobbyId(lobbyId);
+        sendOutput(pt);
     }
 
     private void quit(ActionEvent event) {
         System.out.println("Quitting game...");
+        Request pt = new Request();
+        pt.setX(-1);
+        pt.setY(-1);
+        pt.setPlayerId(myName);
+        pt.setLobbyId(lobbyId);
+        sendOutput(pt);
         client.quit();
-        /*TODO
-
-         */
     }
 
-    private void NewGame(ActionEvent e, int size, Stage popek) {
+    private void redo(ActionEvent event){
+        Request pt = new Request();
+        pt.setX(-1);
+        pt.setY(-1);
+        pt.setPlayerId(myName);
+        pt.setLobbyId(lobbyId);
+        sendOutput(pt);
+    }
+    private void undo(ActionEvent event){
+        Request pt = new Request();
+        pt.setX(-1);
+        pt.setY(-1);
+        pt.setPlayerId(myName);
+        pt.setLobbyId(lobbyId);
+        sendOutput(pt);
+    }
+
+    private void NewGame(ActionEvent e, int size, String color, Stage popek) {
         sng = true;
-        System.out.println("Starting new game, size: " + size);
+        System.out.println("Starting new game, size: " + size+" color: " + color);
         //new Request(size, myName,0, 0)
         Request op = new Request();
         op.setSize(size);
         op.setPlayerId(myName);
         op.setGameMode(0);
-        op.setRandomColor(0);
+        int k;
+        if(color.equals("BLK")){k=2;}else if(color.equals("WHT")){k=1;}else{k=0;}
+        op.setRandomColor(k);
         sendOutput(op);
         Platform.runLater(popek::close);
         /*TODO
@@ -215,14 +257,16 @@ public class CurrentGame {
          */
     }
 
-    private void NewGameWB(ActionEvent e, int size, Stage popek){
+    private void NewGameWB(ActionEvent e, int size,String color, Stage popek){
         sng = true;
         System.out.println("Starting new game with bot, size: " + size);
         Request op = new Request();
         op.setSize(size);
         op.setPlayerId(myName);
         op.setGameMode(1);
-        op.setRandomColor(0);
+        int k;
+        if(color.equals("BLK")){k=2;}else if(color.equals("WHT")){k=1;}else{k=0;}
+        op.setRandomColor(k);
         sendOutput(op);
         Platform.runLater(popek::close);
         /*TODO
@@ -232,31 +276,44 @@ public class CurrentGame {
 
     private void LoadGame(ActionEvent event,/* cos jeszcze, pewnie plik ze stackiem*/ Stage popek, LGPController popControl){
         sng = true;
+        log = true;
         System.out.println("Loading game...");
-        try{lfile = popControl.getFile(); System.out.println(lfile.getName());}catch(NullPointerException e){lfile = null;}
+        try{
+            lfile = popControl.getFile();
+            System.out.println(lfile.getName());
+            try {
+                String content = readFileToString(lfile.getPath());
+                sendOutput(content);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }catch(NullPointerException e){lfile = null;}
         Platform.runLater(popek::close);
         //TODO
     }
 
     private void newBoard(int size){
         Platform.runLater(()->{
-            controller.getGamePlace().getChildren().remove(goban);goban = null;});
-
+            controller.getGamePlace().getChildren().remove(goban);});
+        goban = null;
         goban = new GameBoard(size);
         AddEventHandlers(goban.getIsecs());
         Platform.runLater(()->{controller.getGamePlace().getChildren().add(goban);});
         sng = false;
     }
     private void AddEventHandlers(Intersection[][] intersections) { // Tu podmienie potem na gb.getCrossings() powinno dzialac
-        for (int i = 0; i < intersections.length; i++) {
-            for(int j = 0; j < intersections[0].length; j++) {
-                intersections[i][j].setOnMouseClicked(this::handleSpotMouseClick);
+        if(!log) {
+            for (int i = 0; i < intersections.length; i++) {
+                for (int j = 0; j < intersections[0].length; j++) {
+                    intersections[i][j].setOnMouseClicked(this::handleSpotMouseClick);
+                }
             }
         }
+        log = false;
     }
     private void handleSpotMouseClick(MouseEvent event) {
         if (event.getSource() instanceof Intersection clickedSpot && myTurn) { //tutaj nie jestem dumny z tego instanceof, mozna go podmienic na try catcha
-            if(clickedSpot.getStone() == null) {
+            if(!clickedSpot.hasStone()) {
                 System.out.println(clickedSpot.getX() + " " + clickedSpot.getY());
                 Request op = new Request();
                 op.setX(clickedSpot.getX()); op.setY(clickedSpot.getY()); op.setLobbyId(lobbyId); op.setPlayerId(myName);
@@ -267,5 +324,13 @@ public class CurrentGame {
         } else {
             System.out.println("Czekaj na swoja kolej");
         }
+    }
+
+
+    //Testing new thing
+    private static String readFileToString(String filePath) throws IOException {
+        Path path = Paths.get(filePath);
+        byte[] encoded = Files.readAllBytes(path);
+        return new String(encoded);
     }
 }

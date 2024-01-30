@@ -10,7 +10,7 @@ public class GameBoard extends GridPane {
     private Intersection[][] intersections;
     int size;
 
-    GameBoard(int size) { //cala ma byc 741x741 pikseli
+    public GameBoard(int size) { //cala ma byc 741x741 pikseli
         super();
         this.size = size;
         intersections = new Intersection[size][size];

@@ -36,6 +36,12 @@ public class NewController {
     @FXML
     private MenuItem PlayWBItem;
 
+    @FXML
+    private MenuItem UndoItem;
+
+    @FXML
+    private MenuItem RedoItem;
+
     public AnchorPane getGamePlace() {
         return GamePlace;
     }
@@ -74,5 +80,13 @@ public class NewController {
 
     public MenuItem getPlayWBItem() {
         return PlayWBItem;
+    }
+
+    public MenuItem getRedoItem() {
+        return RedoItem;
+    }
+
+    public MenuItem getUndoItem() {
+        return UndoItem;
     }
 }

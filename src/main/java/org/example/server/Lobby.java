@@ -1,5 +1,7 @@
 package org.example.server;
 
+import org.example.server.exceptions.OutOfGameBoardException;
+
 import java.util.*;
 
 public class Lobby {
@@ -38,12 +40,29 @@ public class Lobby {
         if (sides.contains(side)) {
             Player player = new Player(Integer.parseInt(side));
             sides.remove(side);
-            players.put()
+            players.put(Integer.toString(clientHandler.getClientId()), player);
             clientHandler.setSide(Integer.toString(player.getId()));
         } else {
             String[] sidesArr = sides.toArray(new String[sides.size()]);
             int randomNum = new Random().nextInt(sides.size());
             Player player = new Player(Integer.parseInt(sidesArr[randomNum]));
+            players.put(Integer.toString(clientHandler.getClientId()), player);
         }
+    }
+
+    public void makeMove(int x, int y, int clientId) throws OutOfGameBoardException {
+        Player player = getPlayerByClientId(Integer.toString(clientId));
+        if (gameBoard.play(x, y, player)) {
+            System.out.println("Played ["+x+"-"+y+"] by "+player);
+            gameBoard.nextPlayer();
+        }
+    }
+
+    public int getPlayerSide(String playerId) {
+        return players.get(playerId).getId();
+    }
+
+    public Player getPlayerByClientId(String clientId) {
+        return players.get(clientId);
     }
 }

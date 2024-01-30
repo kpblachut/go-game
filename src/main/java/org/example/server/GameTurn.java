@@ -26,6 +26,11 @@ public class GameTurn {
 
     public GameTurn(int width, int height) {
         boardState = new Integer[width][height];
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; j++) {
+                boardState[i][j] = 0;
+            }
+        }
         capturedStones = 0;
         passCount = 0;
 

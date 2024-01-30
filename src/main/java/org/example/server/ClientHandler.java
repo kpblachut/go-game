@@ -5,6 +5,7 @@ import java.net.Socket;
 import java.util.Arrays;
 import org.example.Request;
 import org.example.Response;
+import org.example.server.exceptions.OutOfGameBoardException;
 
 public class ClientHandler implements Runnable {
     private Socket clientSocket;
@@ -53,14 +54,41 @@ public class ClientHandler implements Runnable {
             Request clientMessage;
             try {
                 while ((clientMessage = (Request) inputReader.readObject()) != null) {
+                    if (inLobby) {
+                        lobby.makeMove(clientMessage.getX(), clientMessage.getY(), clientId);
+                        Response response = new Response();
+                        response.setBoard(lobby.getGameBoard().getGameRecord().getLastTurn().getBoardState());
+                        response.setPlayer(lobby.getPlayerSide(Integer.toString(clientId)));
+                        response.setLobbyId(lobby.getLobbyCode());
+                        System.out.println(Arrays.deepToString(response.getBoard()));
+
+                        outputWriter.writeObject(response);
+                        outputWriter.reset();
+                        continue;
+                    }
                     if(clientMessage.getSize() != null) {
                         // Create new game
                         lobby = server.createLobby(clientMessage.getSize());
+                        lobby.joinLobby(this, Integer.toString(clientMessage.getRandomColor()));
                         inLobby = true;
 
                         Response response = new Response();
                         response.setBoard(lobby.getGameBoard().getGameRecord().getLastTurn().getBoardState());
-                        response.setPlayer(123);
+                        response.setPlayer(lobby.getPlayerSide(Integer.toString(clientId)));
+                        response.setLobbyId(lobby.getLobbyCode());
+                        System.out.println(Arrays.deepToString(response.getBoard()));
+
+                        outputWriter.writeObject(response);
+                        outputWriter.reset();
+                    }
+                    if (clientMessage.getLobbyId() != null) {
+                        lobby = server.fetchLobby(Integer.toString(clientMessage.getLobbyId()));
+                        lobby.joinLobby(this);
+                        inLobby = true;
+
+                        Response response = new Response();
+                        response.setBoard(lobby.getGameBoard().getGameRecord().getLastTurn().getBoardState());
+                        response.setPlayer(lobby.getPlayerSide(Integer.toString(clientId)));
                         response.setLobbyId(lobby.getLobbyCode());
                         System.out.println(Arrays.deepToString(response.getBoard()));
 
@@ -68,7 +96,9 @@ public class ClientHandler implements Runnable {
                         outputWriter.reset();
                     }
                 }
-            } catch (ClassNotFoundException e) {}
+            } catch (ClassNotFoundException e) {} catch (OutOfGameBoardException e) {
+                throw new RuntimeException(e);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -83,5 +113,9 @@ public class ClientHandler implements Runnable {
 
     public void setSide(String side) {
         this.side = side;
+    }
+
+    public int getClientId() {
+        return clientId;
     }
 }

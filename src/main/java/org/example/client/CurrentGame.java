@@ -68,6 +68,9 @@ public class CurrentGame {
         if(ip.passed){
             showPPPopup();
         }
+        if(ip.Scores!=null){
+            showGEPopup(Scores[1],Scores[0]);
+        }
 
         if(!sng && ip.getBoard().length == goban.size) {
             goban.updateBoard(ip.getBoard());
@@ -102,10 +105,24 @@ public class CurrentGame {
             popek.setTitle("PASS!");
             popek.setScene(dialogScene);
             popControl.getOKButton().setOnAction(e->popclose(e,popek));
-            /*TODO
-            Tutaj dodac obsluge wysylania nowej gry z popupa
-            + jeszcze zeby popup sie zamykał kiedy sie juz wlaczy nowa gre
-            */
+            Platform.runLater(popek::show);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void showGEPopup(int w, int b){
+        try {
+            Stage popek = new Stage();
+            FXMLLoader loder = new FXMLLoader(getClass().getResource("/GameEndPopup.fxml"));
+            AnchorPane popupLayout = loder.load();
+            GEPController popControl = loder.getController();
+            popControl.getbPoints().setText(String.valueOf(b));
+            popControl.getwPoints().setText(String.valueOf(w));
+            Scene dialogScene = new Scene(popupLayout);
+            popek.setTitle("GAME END");
+            popek.setScene(dialogScene);
+            popControl.getOksButon().setOnAction(e->gend(e,popek));
             Platform.runLater(popek::show);
         } catch (IOException e) {
             e.printStackTrace();
@@ -280,6 +297,9 @@ public class CurrentGame {
     }
     private void popclose(ActionEvent e,Stage popek) {
         Platform.runLater(popek::close);
+    }
+    private void gend(ActionEvent e,Stage popek){
+
     }
 
     private void NewGameWB(ActionEvent e, int size,String color, Stage popek){

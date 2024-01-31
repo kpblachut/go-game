@@ -21,6 +21,7 @@ import java.nio.file.Paths;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Objects;
 
 public class CurrentGame {
@@ -66,6 +67,10 @@ public class CurrentGame {
 
         if(!sng && ip.getBoard().length == goban.size) {
             goban.updateBoard(ip.getBoard());
+            for (Integer[] row: ip.getBoard()) {
+                System.out.println(Arrays.toString(row));
+            }
+            System.out.println();
         } else if (!sng && ip.getBoard().length != goban.size) {
             System.out.println("This shouldn't happen :(");
         } else if (sng) {
@@ -73,6 +78,7 @@ public class CurrentGame {
             goban.updateBoard(ip.getBoard());
             lobbyId = ip.getLobbyId();
             client.setLobbyId(lobbyId);
+            //goban.setColor(myColor);
         } else {
             System.out.println("This totally shouldn't happen >:(");
         }

@@ -1,6 +1,7 @@
 package org.example.client;
 
 
+import javafx.application.Platform;
 import javafx.scene.layout.GridPane;
 
 import java.util.Objects;
@@ -27,17 +28,22 @@ public class GameBoard extends GridPane {
     }
 
     public void updateBoard(Integer[][] board) {
-        System.out.println("Updatuje goban!");
-        for(int i = 0; i < size; i++) {
-            for(int j = 0; j < size; j++) {
-                intersections[i][j].rmStone();
-                if(Objects.equals(board[i][j], 1) || Objects.equals(board[i][j],2)) {
-                    Stone stone = new Stone((Objects.equals(board[i][j],1)) ? StoneType.WHITE : StoneType.BLACK);
-                    System.out.println("placing stone on: " + i+" "+j);
-                    intersections[i][j].placeStone(stone);
+            for(int i = 0; i < size; i++) {
+                for(int j = 0; j < size; j++) {
+//                    if(intersections[i][j].hasStone() && board[i][j]==0){
+//                        intersections[i][j].rmStone();}
+//                    if (Objects.equals(board[i][j], 1) || Objects.equals(board[i][j], 2)) {
+//                        Stone stone = new Stone((Objects.equals(board[i][j], 1)) ? StoneType.WHITE : StoneType.BLACK);
+//                        System.out.println("placing stone on: " + i + " " + j);
+//                        intersections[i][j].placeStone(stone);
+//                    }
+                    Stone st=null;
+                    if(board[i][j]!=0){
+                        st = new Stone((board[i][j]==1) ? StoneType.WHITE : StoneType.BLACK);
+                    }
+                    intersections[i][j].updateIC(st);
                 }
             }
-        }
     }
 
     public void setColor(Integer color) {

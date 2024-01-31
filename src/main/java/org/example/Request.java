@@ -10,6 +10,7 @@ public class Request implements Serializable {
     Integer playerId;
     Integer gameMode;
     Integer randomColor;
+    String save;
 
     public Request() { // Sending move request;
         //this.x = x;
@@ -85,5 +86,12 @@ public class Request implements Serializable {
 
     public Integer getSize() {
         return size;
+    }
+    public void setSave(String save){
+        this.save = save;
+    }
+
+    public String getSave() {
+        return save;
     }
 }

@@ -3,9 +3,11 @@ package org.example;
 import java.io.Serializable;
 
 public class Response implements Serializable {
-    public Integer player;
+    private Integer player;
     private Integer[][] board;
-    public Integer lobbyId;
+    private Integer lobbyId;
+    private boolean passed;
+    private int[] scores;
 
     public Response(Integer[][] board, Integer lobbyId) {
         this.board = board;
@@ -25,6 +27,21 @@ public class Response implements Serializable {
         this.lobbyId = lobbyId;
     }
 
+    public void setPassed(boolean passed) {
+        this.passed = passed;
+    }
+
+    public void setScores(int[] scores) {
+        this.scores = scores;
+    }
+
+    public int[] getScores() {
+        return scores;
+    }
+
+    public boolean getPassed() {
+        return passed;
+    }
     public Integer[][] getBoard(){
         return board;
     }

@@ -18,6 +18,8 @@ public class ClientHandler implements Runnable {
     private int clientId;
     private Lobby lobby;
     private boolean inLobby;
+    private boolean passed;
+    private boolean sendScore;
     private String side;
     private String clientName;
     private String currentLobby;
@@ -58,7 +60,7 @@ public class ClientHandler implements Runnable {
             try {
                 while ((clientMessage = (Request) inputReader.readObject()) != null) {
                     if (inLobby) {
-                        lobby.makeMove(clientMessage.getX(), clientMessage.getY(), clientId);
+                        lobby.makeMove(clientMessage.getX(), clientMessage.getY(), this);
 
                         sendResponseToAll();
                         continue;
@@ -98,8 +100,24 @@ public class ClientHandler implements Runnable {
         return clientId;
     }
 
+    public void setPassed(boolean passed) {
+        this.passed = passed;
+    }
+
+    public void setSendScore(boolean sendScore) {
+        this.sendScore = sendScore;
+    }
+
     public Response prepareResponse() {
         Response response = new Response();
+        if (passed) {
+            response.setPassed(true);
+            setPassed(false);
+        }
+        if (sendScore) {
+            response.setScores(lobby.getScores());
+            setSendScore(false);
+        }
         response.setBoard(lobby.getGameBoard().getGameRecord().getLastTurn().getBoardState());
         response.setPlayer(lobby.getPlayerSide(Integer.toString(clientId)));
         response.setLobbyId(lobby.getLobbyCode());

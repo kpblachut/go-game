@@ -1,6 +1,8 @@
 package org.example.server;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class Intersection {
@@ -65,8 +67,8 @@ public class Intersection {
         return  neighbours;
     }
 
-    public Set<Intersection> getEmptyNeighbors() {
-        Set<Intersection> neighbours = new HashSet<Intersection>();
+    public List<Intersection> getEmptyNeighbors() {
+        List<Intersection> neighbours = new ArrayList<>();
 
         int[] dx = {-1, 0, 1, 0}, dy = {0, -1, 0, 1};
         for (int i = 0; i < dx.length; i++) {
@@ -83,8 +85,8 @@ public class Intersection {
         return  neighbours;
     }
 
-    public Set<Intersection> getEmptyOrDeadNeighbours(Set<Intersection> deadChains) {
-        Set<Intersection> neighbours = new HashSet<Intersection>();
+    public List<Intersection> getEmptyOrDeadNeighbours(Set<Chain> deadChains) {
+        List<Intersection> neighbours = new ArrayList<>();
 
         int[] dx = {-1, 0, 1, 0}, dy = {0, -1, 0, 1};
         for (int i = 0; i < dx.length; i++) {

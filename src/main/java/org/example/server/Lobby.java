@@ -9,6 +9,7 @@ public class Lobby {
     private Set<String> sides;
     private int lobbyCode;  // Kod wejsciowy
     private GameBoard gameBoard;
+    private int[] scores;
 
 
     int size;
@@ -51,14 +52,18 @@ public class Lobby {
         }
     }
 
-    public void makeMove(int x, int y, int clientId) throws OutOfGameBoardException {
-        Player player = getPlayerByClientId(Integer.toString(clientId));
+    public void makeMove(int x, int y, ClientHandler clientHandler) throws OutOfGameBoardException {
+        Player player = getPlayerByClientId(Integer.toString(clientHandler.getClientId()));
         if (gameBoard.getPassCount() == 2) {
-
+            clientHandler.setSendScore(true);
+            Scorer scorer = new Scorer(gameBoard);
+            scorer.init();
+            scores = scorer.outputScore();
             return;
         }
         if (x == -1 && y == -1) {
             gameBoard.pass(player);
+            clientHandler.setPassed(true);
             return;
         }
         if (gameBoard.play(x, y, player)) {
@@ -78,5 +83,9 @@ public class Lobby {
 
     public Set<String> getPlayerIds() {
         return players.keySet();
+    }
+
+    public int[] getScores() {
+        return scores;
     }
 }

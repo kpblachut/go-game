@@ -8,6 +8,7 @@ public class Response implements Serializable {
     private Integer lobbyId;
     private boolean passed;
     private int[] scores;
+    private String save;
 
     public Response(Integer[][] board, Integer lobbyId) {
         this.board = board;
@@ -52,5 +53,13 @@ public class Response implements Serializable {
 
     public Integer getPlayer() {
         return player;
+    }
+
+    public void setSave(String save) {
+        this.save = save;
+    }
+
+    public String getSave() {
+        return save;
     }
 }

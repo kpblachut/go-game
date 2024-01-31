@@ -49,7 +49,7 @@ public class GameBoard extends GridPane {
     public void setColor(Integer color) {
         for(Intersection[] inters : intersections) {
             for(Intersection inter : inters) {
-                inter.setShadowColor((color==2) ? "#d4cfcf" : "#1f1d1d");
+                inter.setShadowColor((color==1) ? "#d4cfcf" : "#1f1d1d");
             }
         }
     }

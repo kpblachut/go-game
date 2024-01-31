@@ -65,11 +65,11 @@ public class CurrentGame {
             goban.setColor(ip.getPlayer());
         }
 
-        if(ip.passed){
-            showPPPopup();
+        if(ip.getPassed()){
+            Platform.runLater(()->{showPPPopup();});
         }
-        if(ip.Scores!=null){
-            showGEPopup(Scores[1],Scores[0]);
+        if(ip.getScores()!=null){
+            Platform.runLater(()->{showGEPopup(ip.getScores()[1],ip.getScores()[0]);});
         }
 
         if(!sng && ip.getBoard().length == goban.size) {
@@ -111,14 +111,15 @@ public class CurrentGame {
         }
     }
 
-    private void showGEPopup(int w, int b){
+    private void showGEPopup(int b, int w){
         try {
+            double white = (double) w + 6.5;
             Stage popek = new Stage();
             FXMLLoader loder = new FXMLLoader(getClass().getResource("/GameEndPopup.fxml"));
             AnchorPane popupLayout = loder.load();
             GEPController popControl = loder.getController();
             popControl.getbPoints().setText(String.valueOf(b));
-            popControl.getwPoints().setText(String.valueOf(w));
+            popControl.getwPoints().setText(String.valueOf(white));
             Scene dialogScene = new Scene(popupLayout);
             popek.setTitle("GAME END");
             popek.setScene(dialogScene);
@@ -139,10 +140,6 @@ public class CurrentGame {
             popek.setTitle("Start new game");
             popek.setScene(dialogScene);
             popControl.getCGButton().setOnAction(e -> NewGame(e,popControl.getSizeChoice().getValue(),popControl.getColorCBox().getValue(), popek));
-            /*TODO
-            Tutaj dodac obsluge wysylania nowej gry z popupa
-            + jeszcze zeby popup sie zamykał kiedy sie juz wlaczy nowa gre
-            */
             Platform.runLater(popek::show);
         } catch (IOException e) {
             e.printStackTrace();

@@ -155,7 +155,7 @@ public class Intersection extends StackPane {
     }
 
     public void setShadowColor(String color){
-        shadow.setFill(Color.valueOf(color));
+        Platform.runLater(()->{shadow.setFill(Color.valueOf(color));});
     }
 
     EventHandler<MouseEvent> eventHandler = new EventHandler<MouseEvent>() {

@@ -1,5 +1,7 @@
 package org.example.server;
 
+import org.example.Request;
+
 import java.util.ArrayList;
 import java.util.Random;
 public class Botter {
@@ -16,14 +18,11 @@ public class Botter {
         public int getX(){return x;}
         public int  getY(){return y;}
     }
-    Botter(int bColor) {
-        this.bColor = bColor;
-        random = new Random();
-    }
+    Botter(){}
 
-    public void makeMove(Integer[][] board) {//(y,x)
-        ArrayList<field> myFields = botFields(board);
-        ArrayList<field> legalFields = legalFields(board);
+    public void makeMove(Integer[][] board,int bolor) {//(y,x)
+        ArrayList<field> myFields = botFields(board, bolor);
+        ArrayList<field> legalFields = legalFields(board,bolor);
         field wolne=null;
         boolean legal = false;
         while(legal!=true){
@@ -34,7 +33,7 @@ public class Botter {
                 wolne = legalFields.get(random.nextInt(legalFields.size()));
                 mx = wolne.getX();
                 my = wolne.getY();
-            } else if (random.nextBoolean()) {
+            } else if (random.nextInt(100)<15) {
                 wolne = legalFields.get(random.nextInt(legalFields.size()));
                 mx = wolne.getX();
                 my = wolne.getY();
@@ -42,7 +41,7 @@ public class Botter {
                 field moje;
                 for (int i = 0; i < 5; i++) {
                     moje = myFields.get(random.nextInt(myFields.size()));
-                    wolne = nearEField(moje, board);
+                    wolne = nearEField(moje, board,bolor);
                     if (wolne != null) {
                         break;
                     }
@@ -55,6 +54,46 @@ public class Botter {
             }
             if(mx!=-1){legal= isLegal(board,mx,my);} else{legal = true;}
         }
+    }
+    public Request makeMoveOnBoard(Integer[][] board,int bolor) {//(y,x)
+        random = new Random();
+        ArrayList<field> myFields = botFields(board,bolor);
+        ArrayList<field> legalFields = legalFields(board,bolor);
+        field wolne=null;
+        boolean legal = false;
+        while(legal!=true){
+            if (legalFields.isEmpty()) {
+                mx = -1;
+                my = -1;
+            } else if (myFields.isEmpty()) {
+                wolne = legalFields.get(random.nextInt(legalFields.size()));
+                mx = wolne.getX();
+                my = wolne.getY();
+            } else if (random.nextInt(100)<15) {
+                wolne = legalFields.get(random.nextInt(legalFields.size()));
+                mx = wolne.getX();
+                my = wolne.getY();
+            } else {
+                field moje;
+                for (int i = 0; i < 5; i++) {
+                    moje = myFields.get(random.nextInt(myFields.size()));
+                    wolne = nearEField(moje, board, bolor);
+                    if (wolne != null) {
+                        break;
+                    }
+                }
+                if (wolne == null) {
+                    wolne = legalFields.get(random.nextInt(legalFields.size()));
+                }
+                mx = wolne.getX();
+                my = wolne.getY();
+            }
+            if(mx!=-1){legal= isLegal(board,mx,my);} else{legal = true;}
+        }
+        Request rq=new Request();
+        rq.setX(my);
+        rq.setY(mx);
+        return rq;
     }
 
     private boolean isBoardempty(Integer[][] board){
@@ -83,7 +122,7 @@ public class Botter {
         } else return true;
     }
 
-    private boolean koPos(Integer[][] board, int x, int y) {
+    private boolean koPos(Integer[][] board, int x, int y, int bColor) {
         int counten = 0;
         if(board[y][x]!=0){counten+=10;}
         try{if(board[y-1][x]!=bColor &&board[y-1][x]!=0 && y!=0){counten++;}}catch(Exception e){}
@@ -107,7 +146,7 @@ public class Botter {
         return fields;
     }
 
-    private ArrayList<field> botFields(Integer board[][]){
+    private ArrayList<field> botFields(Integer board[][], int bColor){
         ArrayList<field> fields = new ArrayList<>();
         for(int i=0;i<board.length;i++){
             for(int j=0;j<board.length;j++){
@@ -119,11 +158,11 @@ public class Botter {
         return fields;
     }
 
-    private ArrayList<field> legalFields(Integer board[][]){
+    private ArrayList<field> legalFields(Integer board[][],int bColor){
         ArrayList<field> fields = new ArrayList<>();
         for(int i=0;i<board.length;i++){
             for(int j=0;j<board.length;j++){
-                if(board[i][j] == 0 && isLegal(board,i,j) && !koPos(board,i,j)){
+                if(board[i][j] == 0 && isLegal(board,i,j) && !koPos(board,i,j,bColor)){
                     fields.add(new field(j,i));
                 }
             }
@@ -131,13 +170,13 @@ public class Botter {
         return fields;
     }
 
-    private field nearEField(field f, Integer board[][]){
+    private field nearEField(field f, Integer board[][], int bColor){
         field ret=null;
         for(int r=1; r<=5;r++) {
             for (int i = f.getY() - r; i <=f.getY()+r; i++){
                 for (int j = f.getX() - r; j <=f.getX()+r; j++){
                     if(aCiB(i,j, board.length, board.length)){
-                        if(isLegal(board,j,i) && !koPos(board, j, i)){
+                        if(isLegal(board,j,i) && !koPos(board, j, i,bColor)){
                             return new field(j,i);
                         }
                     } else{

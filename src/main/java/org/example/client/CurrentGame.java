@@ -54,19 +54,17 @@ public class CurrentGame {
     }
 
     public void handleInput(Response input) {
-        /*TODO
-
-         */
         Response ip = (Response) input;
-        if(sng){
-            goban.setColor(ip.getPlayer());
-        }
+        myColor = ip.getPlayer();
+//        if(sng){
+//            goban.setColor(ip.getPlayer());
+//        }
         if(ip.getSave()!=null){
             try (BufferedWriter writer = new BufferedWriter(new FileWriter("/saves/"+"save"+String.valueOf(ip.getLobbyId())))) {
                 writer.write(ip.getSave());
-                System.out.println("Dane zostały pomyślnie zapisane do pliku.");
+                System.out.println("Data saved");
             } catch (IOException e) {
-                System.err.println("Wystąpił błąd podczas zapisu do pliku: " + e.getMessage());
+                System.err.println("error while saving: " + e.getMessage());
             }
         }
 
@@ -90,7 +88,7 @@ public class CurrentGame {
             goban.updateBoard(ip.getBoard());
             lobbyId = ip.getLobbyId();
             client.setLobbyId(lobbyId);
-            //goban.setColor(myColor);
+            goban.setColor(myColor);
         } else {
             System.out.println("This totally shouldn't happen >:(");
         }
@@ -162,10 +160,6 @@ public class CurrentGame {
             popek.setScene(dialogScene);
 
             popControl.getJoinButton().setOnAction(e -> JoinGame(e,popControl.getCodeTF().getText(), popek));
-            /*TODO
-            Tutaj dodac obsluge dolaczania gry z popupa
-            + jeszcze zeby popup sie zamykał kiedy sie juz wlaczy nowa gre
-            */
             Platform.runLater(popek::show);
         } catch (IOException e) {
             e.printStackTrace();
@@ -182,10 +176,6 @@ public class CurrentGame {
             popek.setTitle("Play with bot");
             popek.setScene(dialogScene);
             popControl.getCGButton().setOnAction(e -> NewGameWB(e,popControl.getSizeChoice().getValue(), popControl.getColorCBox().getValue(), popek));
-            /*TODO
-            Tutaj dodac obsluge wysylania nowej gry z popupa
-            + jeszcze zeby popup sie zamykał kiedy sie juz wlaczy nowa gre
-            */
             Platform.runLater(popek::show);
         } catch (IOException e) {
             e.printStackTrace();
@@ -222,8 +212,8 @@ public class CurrentGame {
     private void giveUp(ActionEvent event) {
         System.out.println("Giving up...");
         Request pt = new Request();
-        pt.setX(-1);
-        pt.setY(-1);
+        pt.setX(-2);
+        pt.setY(-2);
         pt.setPlayerId(myColor);
         pt.setLobbyId(lobbyId);
         sendOutput(pt);
@@ -232,8 +222,8 @@ public class CurrentGame {
     private void saveGame(ActionEvent event) {
         System.out.println("Saving game...");
         Request pt = new Request();
-        pt.setX(-1);
-        pt.setY(-1);
+        pt.setX(-3);
+        pt.setY(-3);
         pt.setPlayerId(myColor);
         pt.setLobbyId(lobbyId);
         sendOutput(pt);
@@ -242,8 +232,8 @@ public class CurrentGame {
     private void quit(ActionEvent event) {
         System.out.println("Quitting game...");
         Request pt = new Request();
-        pt.setX(-1);
-        pt.setY(-1);
+        pt.setX(-2);
+        pt.setY(-2);
         pt.setPlayerId(myColor);
         pt.setLobbyId(lobbyId);
         sendOutput(pt);
@@ -252,16 +242,16 @@ public class CurrentGame {
 
     private void redo(ActionEvent event){
         Request pt = new Request();
-        pt.setX(-1);
-        pt.setY(-1);
+        pt.setX(-4);
+        pt.setY(-4);
         pt.setPlayerId(myColor);
         pt.setLobbyId(lobbyId);
         sendOutput(pt);
     }
     private void undo(ActionEvent event){
         Request pt = new Request();
-        pt.setX(-1);
-        pt.setY(-1);
+        pt.setX(-5);
+        pt.setY(-5);
         pt.setPlayerId(myColor);
         pt.setLobbyId(lobbyId);
         sendOutput(pt);
@@ -280,9 +270,6 @@ public class CurrentGame {
         op.setRandomColor(k);
         sendOutput(op);
         Platform.runLater(popek::close);
-        /*TODO
-
-         */
     }
 
     private void JoinGame(ActionEvent e, String code, Stage popek) {
@@ -293,15 +280,12 @@ public class CurrentGame {
         op.setPlayerId(myColor);
         sendOutput(op);
         Platform.runLater(popek::close);
-        /*TODO
-
-         */
     }
     private void popclose(ActionEvent e,Stage popek) {
         Platform.runLater(popek::close);
     }
     private void gend(ActionEvent e,Stage popek){
-
+        Platform.runLater(popek::close);
     }
 
     private void NewGameWB(ActionEvent e, int size,String color, Stage popek){
@@ -316,9 +300,6 @@ public class CurrentGame {
         op.setRandomColor(k);
         sendOutput(op);
         Platform.runLater(popek::close);
-        /*TODO
-
-         */
     }
 
     private void LoadGame(ActionEvent event,/* cos jeszcze, pewnie plik ze stackiem*/ Stage popek, LGPController popControl){
@@ -336,7 +317,6 @@ public class CurrentGame {
             }
         }catch(NullPointerException e){lfile = null;}
         Platform.runLater(popek::close);
-        //TODO
     }
 
     private void newBoard(int size){

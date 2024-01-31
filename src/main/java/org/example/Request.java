@@ -3,13 +3,14 @@ package org.example;
 import java.io.Serializable;
 
 public class Request implements Serializable {
-    Integer size;
-    public Integer x;
-    public Integer y;
-    Integer lobbyId;
-    Integer playerId;
-    Integer gameMode;
-    Integer randomColor;
+    private Integer size;
+    private Integer x;
+    private Integer y;
+    private Integer lobbyId;
+    private Integer playerId;
+    private Integer gameMode;
+    private Integer randomColor;
+    private String save;
 
     public Request() { // Sending move request;
         //this.x = x;
@@ -59,6 +60,10 @@ public class Request implements Serializable {
         this.y = y;
     }
 
+    public void setSave(String save) {
+        this.save = save;
+    }
+
     public Integer getRandomColor() {
         return randomColor;
     }
@@ -85,5 +90,9 @@ public class Request implements Serializable {
 
     public Integer getSize() {
         return size;
+    }
+
+    public String getSave() {
+        return save;
     }
 }

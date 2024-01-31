@@ -46,6 +46,16 @@ public class Server {
         return lobby;
     }
 
+    public Lobby createLobby(GameRecord gameRecord) {
+        Lobby lobby = new Lobby(gameRecord);
+        lobbies.put(Integer.toString(lobby.getLobbyCode()), lobby);
+        return lobby;
+    }
+
+    public GameRecord loadFromString(String data) {
+        return GameRecord.load(data);
+    }
+
     public Lobby fetchLobby(String lobbyCode) {
         return lobbies.get(lobbyCode);
     }

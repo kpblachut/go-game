@@ -22,6 +22,13 @@ public class Lobby {
         sides = new HashSet<>(Arrays.asList("1", "2"));
     }
 
+    public Lobby(GameRecord gameRecord) {
+        gameBoard = new GameBoard(gameRecord);
+        this.lobbyCode = new Random().nextInt(9000) + 1000;
+        players = new HashMap<String, Player>();
+        sides = new HashSet<>(Arrays.asList("1", "2"));
+    }
+
     public void addPlayer(Player player) {
         players.put(Integer.toString(player.getId()), player);
     }
@@ -64,6 +71,16 @@ public class Lobby {
         if (x == -1 && y == -1) {
             gameBoard.pass(player);
             clientHandler.setPassed(true);
+            return;
+        }
+        if (x == -2 && y == -2) {
+            gameBoard.pass(player);
+            clientHandler.setPassed(true);
+            return;
+        }
+        if (x == -3 && y == -3) {
+            String save = gameBoard.getGameRecord().save();
+            clientHandler.setSave(save);
             return;
         }
         if (gameBoard.play(x, y, player)) {

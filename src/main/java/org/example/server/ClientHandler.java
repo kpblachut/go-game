@@ -21,6 +21,7 @@ public class ClientHandler implements Runnable {
     private boolean passed;
     private boolean sendScore;
     private String side;
+    private String save;
     private String clientName;
     private String currentLobby;
     private String lobbyCode;
@@ -80,6 +81,13 @@ public class ClientHandler implements Runnable {
 
                         sendResponse();
                     }
+                    if (clientMessage.getSave() != null) {
+                        lobby = server.createLobby(server.loadFromString(clientMessage.getSave()));
+                        lobby.joinLobby(this);
+                        inLobby = true;
+
+                        sendResponse();
+                    }
                 }
             } catch (ClassNotFoundException e) {} catch (OutOfGameBoardException e) {
                 throw new RuntimeException(e);
@@ -108,6 +116,14 @@ public class ClientHandler implements Runnable {
         this.sendScore = sendScore;
     }
 
+    public void setSave(String save) {
+        this.save = save;
+    }
+
+    public String getSave() {
+        return save;
+    }
+
     public Response prepareResponse() {
         Response response = new Response();
         if (passed) {
@@ -117,6 +133,10 @@ public class ClientHandler implements Runnable {
         if (sendScore) {
             response.setScores(lobby.getScores());
             setSendScore(false);
+        }
+        if (save != null) {
+            response.setSave(save);
+            save = null;
         }
         response.setBoard(lobby.getGameBoard().getGameRecord().getLastTurn().getBoardState());
         response.setPlayer(lobby.getPlayerSide(Integer.toString(clientId)));

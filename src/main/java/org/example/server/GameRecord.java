@@ -1,9 +1,6 @@
 package org.example.server;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileReader;
-import java.io.FileWriter;
+import java.io.*;
 import java.util.EmptyStackException;
 import java.util.Stack;
 
@@ -85,19 +82,16 @@ public class GameRecord {
         preceding.push(following.pop());
     }
 
-    public boolean save(String filepath) {
-        BufferedWriter writer;
+    public String save() {
+        StringWriter stringWriter = new StringWriter();
+        BufferedWriter writer = new BufferedWriter(stringWriter);
         try {
-            // BufferedWriter Creation
-            writer = new BufferedWriter(new FileWriter(filepath));
-
             writer.write("{");
             writer.newLine();
             writer.write("  \"width\": " + preceding.peek().getBoardState().length + ",");
             writer.newLine();
             writer.write("  \"height\": " + preceding.peek().getBoardState()[0].length + ",");
             writer.newLine();
-
 
             writer.write("  \"preceding\": [");
             writer.newLine();
@@ -112,7 +106,7 @@ public class GameRecord {
             writer.newLine();
 
             Stack<GameTurn> followForWrite = new Stack<GameTurn>();
-            for (int i = following.size() - 1 ; i >= 0 ; i--) {
+            for (int i = following.size() - 1; i >= 0; i--) {
                 followForWrite.push(following.get(i));
             }
 
@@ -131,24 +125,24 @@ public class GameRecord {
             writer.newLine();
 
             writer.close();
-
+            return stringWriter.toString();
         } catch (Exception ex) {
-            return false;
+            ex.printStackTrace();
+            return null;
         }
-
-        return true;
     }
 
-    public static GameRecord load(String filepath) {
-        BufferedReader reader;
+
+    public static GameRecord load(String data) {
+        StringReader stringReader = new StringReader(data);
+        BufferedReader reader = new BufferedReader(stringReader);
         GameRecord record = null;
         try {
-            reader = new BufferedReader(new FileReader(filepath));
             String delim = "\\s*[\\[\\]\\{\\},:]\\s*|\\s+|\\s*null\\s*";
 
             reader.readLine();
 
-            int width  = Integer.parseInt(reader.readLine().split(delim)[2]);
+            int width = Integer.parseInt(reader.readLine().split(delim)[2]);
             int height = Integer.parseInt(reader.readLine().split(delim)[2]);
 
             GameBoard gameBoard = new GameBoard(width, height);
@@ -156,10 +150,10 @@ public class GameRecord {
             Player two = new Player(2);
             Player actualPlayer = one;
 
-            int x,y;
+            int x, y;
             String[] line;
 
-            reader.readLine(); //Skipping first virtual move;
+            reader.readLine(); // Skipping first virtual move;
             reader.readLine();
 
             int i = 0;
@@ -167,7 +161,7 @@ public class GameRecord {
             boolean precedingCompleted = false;
             while(true) {
                 line = reader.readLine().split(delim);
-                if(line.length==0) {
+                if(line.length == 0) {
                     if (precedingCompleted) {
                         break;
                     } else {
@@ -196,12 +190,12 @@ public class GameRecord {
             reader.close();
 
             record = gameBoard.getGameRecord();
-            for (int j = i; j > precedingCount ; j--) {
+            for (int j = i; j > precedingCount; j--) {
                 record.undo();
             }
-
         } catch (Exception ex) {
-            ex.getLocalizedMessage();
+            ex.printStackTrace();
+            return null;
         }
 
         return record;

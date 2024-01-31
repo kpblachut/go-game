@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Random;
 public class Botter {
     Random random;
-    int bColor;
+    int color;
     int mx, my;
     private class field {
         int x;
@@ -18,9 +18,22 @@ public class Botter {
         public int getX(){return x;}
         public int  getY(){return y;}
     }
-    Botter(){}
+    ClientHandler mock;
+    String side;
+    Botter(int color){this.color = color;
+    mock = new ClientHandler();
+    mock.setSide(String.valueOf(color));}
 
-    public void makeMove(Integer[][] board,int bolor) {//(y,x)
+    public ClientHandler getMock() {
+        return mock;
+    }
+
+    public String getSide() {
+        return side;
+    }
+
+    public void makeMove(Integer[][] board) {//(y,x)
+        int bolor = this.color;
         ArrayList<field> myFields = botFields(board, bolor);
         ArrayList<field> legalFields = legalFields(board,bolor);
         field wolne=null;
@@ -55,7 +68,8 @@ public class Botter {
             if(mx!=-1){legal= isLegal(board,mx,my);} else{legal = true;}
         }
     }
-    public Request makeMoveOnBoard(Integer[][] board,int bolor) {//(y,x)
+    public Request makeMoveOnBoard(Integer[][] board) {//(y,x)
+        int bolor = this.color;
         random = new Random();
         ArrayList<field> myFields = botFields(board,bolor);
         ArrayList<field> legalFields = legalFields(board,bolor);
@@ -193,4 +207,5 @@ public class Botter {
     }
     public int getX(){return mx;}
     public int  getY(){return my;}
+    public int getColor(){return color;}
 }

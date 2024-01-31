@@ -27,6 +27,8 @@ public class ClientHandler implements Runnable {
     private String lobbyCode;
     Lobby MyLobby;
 
+    Botter bot;
+
     public ClientHandler(Socket clientSocket, Server server, int clientId) {
         this.clientSocket = clientSocket;
         this.server = server;
@@ -39,6 +41,7 @@ public class ClientHandler implements Runnable {
             e.printStackTrace();
         }
     }
+    public ClientHandler(){}
 
     public String getClientName() {
         return clientName;
@@ -62,12 +65,22 @@ public class ClientHandler implements Runnable {
                 while ((clientMessage = (Request) inputReader.readObject()) != null) {
                     if (inLobby) {
                         lobby.makeMove(clientMessage.getX(), clientMessage.getY(), this);
-
+                        sendResponseToAll();
+                        if (bot != null) {
+                            Request rq = bot.makeMoveOnBoard(lobby.getGameBoard().getGameRecord().getLastTurn().getBoardState());
+                            rq.setPlayerId(bot.getColor());
+                            lobby.makeMove(rq.getX(), rq.getY(), this);
+                        }
                         sendResponseToAll();
                         continue;
                     }
                     if(clientMessage.getSize() != null) {
                         // Create new game
+                        if (clientMessage.getGameMode() == 1) {
+                            int color =(clientMessage.getRandomColor()==1) ? 2:1;
+                            bot = new Botter(color);
+                            lobby.joinLobby(bot.getMock());
+                        }
                         lobby = server.createLobby(clientMessage.getSize());
                         lobby.joinLobby(this, Integer.toString(clientMessage.getRandomColor()));
                         inLobby = true;

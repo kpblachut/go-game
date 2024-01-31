@@ -46,7 +46,7 @@ public class CurrentGame {
         controller.getQuitItem().setOnAction(this::quit);
         controller.getLoadGameItem().setOnAction(this::ShowLGPopUp);
         controller.getRedoItem().setOnAction(this::redo);
-        controller.getRedoItem().setOnAction(this::undo);
+        controller.getUndoItem().setOnAction(this::undo);
         goban = client.getGoban();
         sng = true;
         log = false;
@@ -60,7 +60,7 @@ public class CurrentGame {
 //            goban.setColor(ip.getPlayer());
 //        }
         if(ip.getSave()!=null){
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter("/saves/"+"save"+String.valueOf(ip.getLobbyId())))) {
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter("save"+String.valueOf(ip.getLobbyId())+".save"))) {
                 writer.write(ip.getSave());
                 System.out.println("Data saved");
             } catch (IOException e) {
@@ -313,6 +313,7 @@ public class CurrentGame {
                 String content = readFileToString(lfile.getPath());
                 Request rq = new Request();
                 rq.setSave(content);
+                sendOutput(rq);
             } catch (IOException e) {
                 e.printStackTrace();
             }

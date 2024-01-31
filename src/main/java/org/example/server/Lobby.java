@@ -74,13 +74,23 @@ public class Lobby {
             return;
         }
         if (x == -2 && y == -2) {
-            gameBoard.pass(player);
-            clientHandler.setPassed(true);
+            clientHandler.setSendScore(true);
+            Scorer scorer = new Scorer(gameBoard);
+            scorer.init();
+            scores = scorer.outputScore();
             return;
         }
         if (x == -3 && y == -3) {
             String save = gameBoard.getGameRecord().save();
             clientHandler.setSave(save);
+            return;
+        }
+        if (x == -4 && y == -4) {
+            gameBoard.redo();
+            return;
+        }
+        if (x == -5 && y == -5) {
+            gameBoard.undo();
             return;
         }
         if (gameBoard.play(x, y, player)) {

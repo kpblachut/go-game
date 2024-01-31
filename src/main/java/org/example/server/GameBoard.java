@@ -256,7 +256,50 @@ public class GameBoard {
             System.out.println("Changing player for P1");
         }
         return true;
+    }
+
+    public boolean undo () {
+        if (gameRecord.hasPreceding()) {
+            GameTurn current = gameRecord.getLastTurn();
+            gameRecord.undo();
+            GameTurn last = gameRecord.getLastTurn();
+            try {
+                takeGameTurn(last,P1,P2);
+                currentPlayer.removeCapturedStones(current.getCapturedStones());
+                nextPlayer();
+                passCount = last.getPassCount();
+                return true;
+            } catch (InvalidGameTurnEncounteredException ex) {
+                passCount = current.getPassCount();
+                gameRecord.redo();
+                return false;
+            }
+        } else {
+            return false;
         }
+
+    }
+
+    public boolean redo() {
+        if (gameRecord.hasFollowing()) {
+            GameTurn current = gameRecord.getLastTurn();
+            gameRecord.redo();
+            GameTurn next = gameRecord.getLastTurn();
+            try {
+                takeGameTurn(next,P1,P2);
+                nextPlayer();
+                currentPlayer.addCapturedStones(gameRecord.getLastTurn().getCapturedStones());
+                passCount = next.getPassCount();
+                return true;
+            } catch (InvalidGameTurnEncounteredException ex) {
+                passCount = current.getPassCount();
+                gameRecord.undo();
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
 
 }
 

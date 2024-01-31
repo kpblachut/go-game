@@ -27,15 +27,15 @@ public class Player {
         capturedStones -= n;
     }
 
-//    public boolean play(GameBoard gameBoard, int x, int y) {
-//        if (x == -1 && y == -1) {
-//            GameRecord gameRecord = gameBoard.getGameRecord();
-//            gameRecord.apply(gameRecord.getLastTurn().toNext(-1, -1, this.getId(), Collections.<Intersection>emptySet()));
-//            gameBoard.updatePassCount(true);
-//
-//            return true;
-//        } else {
-//            return gameBoard
-//        }
-//    }
+    public boolean play(GameBoard gameBoard, int x, int y) {
+        if (x == -1 && y == -1) {
+            GameRecord gameRecord = gameBoard.getGameRecord();
+            gameRecord.apply(gameRecord.getLastTurn().toNext(-1, -1, this.getId(), Collections.<Intersection>emptySet()));
+            gameBoard.updatePassCount(true);
+
+            return true;
+        } else {
+            return gameBoard.play(gameBoard.getIntersection(x,y),this);
+        }
+    }
 }

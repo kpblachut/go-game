@@ -11,15 +11,12 @@ import org.example.NewController;
 import org.example.Request;
 import org.example.Response;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Objects;
@@ -63,6 +60,14 @@ public class CurrentGame {
         Response ip = (Response) input;
         if(sng){
             goban.setColor(ip.getPlayer());
+        }
+        if(ip.getSave()!=null){
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter("/saves/"+"save"+String.valueOf(ip.getLobbyId())))) {
+                writer.write(ip.getSave());
+                System.out.println("Dane zostały pomyślnie zapisane do pliku.");
+            } catch (IOException e) {
+                System.err.println("Wystąpił błąd podczas zapisu do pliku: " + e.getMessage());
+            }
         }
 
         if(ip.getPassed()){

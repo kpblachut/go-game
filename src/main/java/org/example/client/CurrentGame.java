@@ -263,7 +263,7 @@ public class CurrentGame {
         //new Request(size, myColor,0, 0)
         Request op = new Request();
         op.setSize(size);
-        op.setPlayerId(myColor);
+        //op.setPlayerId(myColor);
         op.setGameMode(0);
         int k;
         if(color.equals("BLK")){k=2;}else if(color.equals("WHT")){k=1;}else{k=0;}
@@ -277,7 +277,7 @@ public class CurrentGame {
         System.out.println("Joining game with code: " + code);
         Request op = new Request();
         op.setLobbyId(Integer.parseInt(code));
-        op.setPlayerId(myColor);
+        //op.setPlayerId(myColor);
         sendOutput(op);
         Platform.runLater(popek::close);
     }
@@ -293,7 +293,7 @@ public class CurrentGame {
         System.out.println("Starting new game with bot, size: " + size);
         Request op = new Request();
         op.setSize(size);
-        op.setPlayerId(myColor);
+        //op.setPlayerId(myColor);
         op.setGameMode(1);
         int k;
         if(color.equals("BLK")){k=2;}else if(color.equals("WHT")){k=1;}else{k=0;}
@@ -311,7 +311,8 @@ public class CurrentGame {
             System.out.println(lfile.getName());
             try {
                 String content = readFileToString(lfile.getPath());
-                sendOutput(content);
+                Request rq = new Request();
+                rq.setSave(content);
             } catch (IOException e) {
                 e.printStackTrace();
             }

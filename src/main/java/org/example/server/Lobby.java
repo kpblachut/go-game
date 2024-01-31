@@ -53,6 +53,14 @@ public class Lobby {
 
     public void makeMove(int x, int y, int clientId) throws OutOfGameBoardException {
         Player player = getPlayerByClientId(Integer.toString(clientId));
+        if (gameBoard.getPassCount() == 2) {
+
+            return;
+        }
+        if (x == -1 && y == -1) {
+            gameBoard.pass(player);
+            return;
+        }
         if (gameBoard.play(x, y, player)) {
             System.out.println("Played ["+x+"-"+y+"] by player "+player.getId());
             System.out.println("Captured stones "+player.getCapturedStones());

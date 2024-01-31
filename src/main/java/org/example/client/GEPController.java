@@ -14,7 +14,7 @@ public class GEPController {
     private Label bPoints;
 
     @FXML
-    private AnchorPane wPoints;
+    private Label wPoints;
 
     public Label getwPoints() {
         return wPoints;

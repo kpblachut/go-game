@@ -52,26 +52,55 @@ public class Intersection extends StackPane {
         stone.setScaleX(size);
         stone.setStrokeWidth(0.1);
 
-        Platform.runLater(() -> {
+            stone.setVisible(true);
             this.getChildren().add(stone);
-            shadow.setVisible(false);
             stone.setCenterX(size / 2);
             stone.setCenterY(size / 2);
-            stone.setVisible(true);
-        });
+            shadow.setVisible(false);
     }
 
     public void rmStone(){
         hs=false;
         if(stone != null) {
-            System.out.println("Removing stone from: "+getX()+" "+getY());
-            Platform.runLater(() -> {
+            //Platform.runLater(() -> {
+                stone.setVisible(false);
                 this.getChildren().remove(stone);
-                this.stone = null;
-            });
+            //});
+            this.stone = null;
         }
     }
 
+    public void updateIC(Stone st){
+        double size = 0.4 * ((double) BW / gb.getSize());
+        boolean change=false;
+        if(st==null){if(hs){change = true;}
+            hs=false;}
+        else {
+            if(!hs){change=true;}
+            if(hs && this.getStone()!=null){
+                if(this.getStone().getType()==st.getType())
+                    change=false;
+            }
+            hs=true;
+        }
+        if(change){
+            Platform.runLater(() -> {
+                if (st == null) {
+                    if(this.stone!=null) {
+                        stone.setVisible(false);
+                        this.getChildren().remove(this.stone);
+                    }
+                    shadow.setVisible(false);
+                } else {
+                    st.setScaleY(size);
+                    st.setScaleX(size);
+                    st.setStrokeWidth(0.1);
+                    this.stone = st;
+                    this.getChildren().add(st);
+                }
+            });
+        }
+    }
     public int getX(){
         return x;
     }
@@ -132,7 +161,7 @@ public class Intersection extends StackPane {
     EventHandler<MouseEvent> eventHandler = new EventHandler<MouseEvent>() {
         @Override
         public void handle(MouseEvent e) {
-            if(stone == null) {
+            if(!hs) {
                 shadow.setVisible(true);
             }
         }
@@ -141,7 +170,7 @@ public class Intersection extends StackPane {
     EventHandler<MouseEvent> eventHandler2 = new EventHandler<MouseEvent>() {
         @Override
         public void handle(MouseEvent e) {
-            if(stone == null) {
+            if(!hs) {
                 shadow.setVisible(false);
             }
         }

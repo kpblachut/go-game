@@ -47,13 +47,15 @@ public class Lobby {
             int randomNum = new Random().nextInt(sides.size());
             Player player = new Player(Integer.parseInt(sidesArr[randomNum]));
             players.put(Integer.toString(clientHandler.getClientId()), player);
+            clientHandler.setSide(Integer.toString(player.getId()));
         }
     }
 
     public void makeMove(int x, int y, int clientId) throws OutOfGameBoardException {
         Player player = getPlayerByClientId(Integer.toString(clientId));
         if (gameBoard.play(x, y, player)) {
-            System.out.println("Played ["+x+"-"+y+"] by "+player);
+            System.out.println("Played ["+x+"-"+y+"] by player "+player.getId());
+            System.out.println("Captured stones "+player.getCapturedStones());
             gameBoard.nextPlayer();
         }
     }
@@ -64,5 +66,9 @@ public class Lobby {
 
     public Player getPlayerByClientId(String clientId) {
         return players.get(clientId);
+    }
+
+    public Set<String> getPlayerIds() {
+        return players.keySet();
     }
 }

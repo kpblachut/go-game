@@ -3,6 +3,9 @@ package org.example.server;
 import java.io.*;
 import java.net.Socket;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
+
 import org.example.Request;
 import org.example.Response;
 import org.example.server.exceptions.OutOfGameBoardException;
@@ -56,14 +59,8 @@ public class ClientHandler implements Runnable {
                 while ((clientMessage = (Request) inputReader.readObject()) != null) {
                     if (inLobby) {
                         lobby.makeMove(clientMessage.getX(), clientMessage.getY(), clientId);
-                        Response response = new Response();
-                        response.setBoard(lobby.getGameBoard().getGameRecord().getLastTurn().getBoardState());
-                        response.setPlayer(lobby.getPlayerSide(Integer.toString(clientId)));
-                        response.setLobbyId(lobby.getLobbyCode());
-                        System.out.println(Arrays.deepToString(response.getBoard()));
 
-                        outputWriter.writeObject(response);
-                        outputWriter.reset();
+                        sendResponseToAll();
                         continue;
                     }
                     if(clientMessage.getSize() != null) {
@@ -72,28 +69,14 @@ public class ClientHandler implements Runnable {
                         lobby.joinLobby(this, Integer.toString(clientMessage.getRandomColor()));
                         inLobby = true;
 
-                        Response response = new Response();
-                        response.setBoard(lobby.getGameBoard().getGameRecord().getLastTurn().getBoardState());
-                        response.setPlayer(lobby.getPlayerSide(Integer.toString(clientId)));
-                        response.setLobbyId(lobby.getLobbyCode());
-                        System.out.println(Arrays.deepToString(response.getBoard()));
-
-                        outputWriter.writeObject(response);
-                        outputWriter.reset();
+                        sendResponse();
                     }
                     if (clientMessage.getLobbyId() != null) {
                         lobby = server.fetchLobby(Integer.toString(clientMessage.getLobbyId()));
                         lobby.joinLobby(this);
                         inLobby = true;
 
-                        Response response = new Response();
-                        response.setBoard(lobby.getGameBoard().getGameRecord().getLastTurn().getBoardState());
-                        response.setPlayer(lobby.getPlayerSide(Integer.toString(clientId)));
-                        response.setLobbyId(lobby.getLobbyCode());
-                        System.out.println(Arrays.deepToString(response.getBoard()));
-
-                        outputWriter.writeObject(response);
-                        outputWriter.reset();
+                        sendResponse();
                     }
                 }
             } catch (ClassNotFoundException e) {} catch (OutOfGameBoardException e) {
@@ -103,11 +86,7 @@ public class ClientHandler implements Runnable {
             e.printStackTrace();
         } finally {
             // Remove the client from the lobby and the server when the connection is closed
-            if (currentLobby != null) {
-                server.broadcastMessage(clientName + " has left lobby: " + currentLobby, this);
-            }
             server.removeClient(this);
-            server.broadcastMessage(clientName + " has left the chat.", this);
         }
     }
 
@@ -117,5 +96,31 @@ public class ClientHandler implements Runnable {
 
     public int getClientId() {
         return clientId;
+    }
+
+    public Response prepareResponse() {
+        Response response = new Response();
+        response.setBoard(lobby.getGameBoard().getGameRecord().getLastTurn().getBoardState());
+        response.setPlayer(lobby.getPlayerSide(Integer.toString(clientId)));
+        response.setLobbyId(lobby.getLobbyCode());
+        for (Integer[] row: response.getBoard()) {
+            System.out.println(Arrays.toString(row));
+        }
+        System.out.println();
+
+        return response;
+    }
+    public void sendResponse() throws IOException {
+        Response response = prepareResponse();
+        outputWriter.writeObject(response);
+        outputWriter.reset();
+    }
+
+    public void sendResponseToAll() throws IOException {
+        Set<String> players = lobby.getPlayerIds();
+        for (String playerId : players) {
+            ClientHandler clientHandler = server.getClient(playerId);
+            clientHandler.sendResponse();
+        }
     }
 }

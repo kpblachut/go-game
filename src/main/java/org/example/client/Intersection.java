@@ -15,7 +15,7 @@ import static javafx.scene.layout.StackPane.setAlignment;
 
 public class Intersection extends StackPane {
 
-    private static final int BW = 600; // BOARD WIDTH
+    private static final int BW = 608; // BOARD WIDTH
     final GameBoard gb;
     final int x;
     final int y;

@@ -7,7 +7,7 @@ import java.util.*;
 
 public class Server {
     private static final int PORT = 12345;
-    private List<ClientHandler> clients = new ArrayList<>();
+    private Map<String, ClientHandler> clients = new HashMap<>();
     private Map<String, Lobby> lobbies = new HashMap<>();
 
 
@@ -26,19 +26,11 @@ public class Server {
                 int clientId = new Random().nextInt(9000) + 1000;
 
                 ClientHandler clientHandler = new ClientHandler(clientSocket, this, clientId);
-                clients.add(clientHandler);
+                clients.put(Integer.toString(clientId), clientHandler);
                 new Thread(clientHandler).start();
             }
         } catch (IOException e) {
             e.printStackTrace();
-        }
-    }
-
-    public void broadcastMessage(String message, ClientHandler sender) {
-        for (ClientHandler client : clients) {
-            if (client != sender) {
-                client.sendMessage(message);
-            }
         }
     }
 
@@ -58,6 +50,7 @@ public class Server {
         return lobbies.get(lobbyCode);
     }
 
-
-
+    public ClientHandler getClient(String clientId) {
+        return clients.get(clientId);
+    }
 }

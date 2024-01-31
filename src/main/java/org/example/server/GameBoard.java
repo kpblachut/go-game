@@ -116,6 +116,8 @@ public class GameBoard {
 
         if (intersection.getChain() != null) return false;
 
+        if (player.getId() == currentPlayer.getId()) return false;
+
         Set<Intersection> capturedStones = null;
         Set<Chain> capturedChains = null;
 

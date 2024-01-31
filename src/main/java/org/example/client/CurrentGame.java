@@ -65,6 +65,10 @@ public class CurrentGame {
             goban.setColor(ip.getPlayer());
         }
 
+        if(ip.passed){
+            showPPPopup();
+        }
+
         if(!sng && ip.getBoard().length == goban.size) {
             goban.updateBoard(ip.getBoard());
             for (Integer[] row: ip.getBoard()) {
@@ -86,6 +90,26 @@ public class CurrentGame {
 
     private void sendOutput(Object request){
         client.send(request);
+    }
+
+    private void showPPPopup(){
+        try {
+            Stage popek = new Stage();
+            FXMLLoader loder = new FXMLLoader(getClass().getResource("/PPpopo.fxml"));
+            AnchorPane popupLayout = loder.load();
+            PPController popControl = loder.getController();
+            Scene dialogScene = new Scene(popupLayout);
+            popek.setTitle("PASS!");
+            popek.setScene(dialogScene);
+            popControl.getOKButton().setOnAction(e->popclose(e,popek));
+            /*TODO
+            Tutaj dodac obsluge wysylania nowej gry z popupa
+            + jeszcze zeby popup sie zamykał kiedy sie juz wlaczy nowa gre
+            */
+            Platform.runLater(popek::show);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void showNGPopUp(ActionEvent event) {
@@ -253,6 +277,9 @@ public class CurrentGame {
         /*TODO
 
          */
+    }
+    private void popclose(ActionEvent e,Stage popek) {
+        Platform.runLater(popek::close);
     }
 
     private void NewGameWB(ActionEvent e, int size,String color, Stage popek){
